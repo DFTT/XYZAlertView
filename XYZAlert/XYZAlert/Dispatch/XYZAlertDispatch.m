@@ -42,6 +42,13 @@
     [self tryDispatch];
 }
 - (void)tryDispatch {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // 主要是为了延迟一次runloop ()
+        // 其次保证主线程
+        [self p___dispatch];
+    });
+}
+- (void)p___dispatch {
     UIView *view = _verifyBlock();
     if (nil == view) {
         return;
@@ -63,7 +70,6 @@
         [alert dispatchAlertViewShowOn:view];
     }
 }
-
 #pragma mark - XYZAlertLifeProtocal
 - (void)alertDidReady:(id<XYZAlertEnableDispatchProtocal>)alert {
     [self tryDispatch];

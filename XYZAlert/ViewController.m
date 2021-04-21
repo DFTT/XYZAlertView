@@ -22,7 +22,7 @@
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
     btn.frame = CGRectMake(0, 0, 200, 50);
-    [btn setTitle:@"XYZSimpleAlet样式 循环展示" forState:UIControlStateNormal];
+    [btn setTitle:@"SimpleAlet样式 点击循环展示" forState:UIControlStateNormal];
     [btn addTarget:self action:@selector(_____XYZSimpleAlet) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
     btn.center = CGPointMake(self.view.bounds.size.width / 2, self.view.bounds.size.height / 3 * 1);
@@ -35,29 +35,30 @@
     [self.view addSubview:btn2];
     btn2.center = CGPointMake(self.view.bounds.size.width / 2, self.view.bounds.size.height / 3 * 2);
 }
+
 - (void)_____dependAlert {
     XYZSystemAlertView *alert1 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题1" msg:@"我的是描述描述描述描述描述描述"];
-    XYZSystemAlertViewAction *ac1 = [XYZSystemAlertViewAction actionWithName:@"确认" clickCallback:^{
+    XYZSystemAlertViewActionBtn *ac1 = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
         NSLog(@"0");
     }];
-    [alert1 addAction:ac1];
+    [alert1 addActionBtn:ac1];
     [alert1 setDidReady:NO];
     alert1.alertID = @"1";
     
     XYZSystemAlertView *alert2 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题2" msg:@"我的是描述描述描述描述描述描述"];
-    XYZSystemAlertViewAction *act2 = [XYZSystemAlertViewAction actionWithName:@"确认" clickCallback:^{
+    XYZSystemAlertViewActionBtn *act2 = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
         NSLog(@"0");
     }];
-    [alert2 addAction:act2];
+    [alert2 addActionBtn:act2];
     [alert2 setDidReady:NO];
     alert2.alertID = @"2";
     
     XYZSystemAlertView *alert3 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题3" msg:@"我的是描述描述描述描述描述描述"];
-    XYZSystemAlertViewAction *act3 = [XYZSystemAlertViewAction actionWithName:@"确认" clickCallback:^{
+    XYZSystemAlertViewActionBtn *act3 = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
         NSLog(@"0");
     }];
     [alert3 setDidReady:NO];
-    [alert3 addAction:act3];
+    [alert3 addActionBtn:act3];
     alert3.alertID = @"3";
 
     
@@ -108,43 +109,46 @@
         _alert = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题" msg:nil];
     }else if (_aa % maxIdx == 2) {
         _alert = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题" msg:nil];
-        XYZSystemAlertViewAction *act = [XYZSystemAlertViewAction actionWithName:@"确认" clickCallback:^{
+        XYZSystemAlertViewActionBtn *act = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
             NSLog(@"0");
         }];
-        [_alert addAction:act];
+        [act setImage:UIImage.actionsImage forState:UIControlStateNormal];
+        [_alert addActionBtn:act];
     }
     else if (_aa % maxIdx == 3) {
         _alert = [[XYZSystemAlertView alloc] initWithTitle:nil msg:@"我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述"];
     }else if (_aa % maxIdx == 4) {
         _alert = [[XYZSystemAlertView alloc] initWithTitle:nil msg:@"我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述"];
-        XYZSystemAlertViewAction *act = [XYZSystemAlertViewAction actionWithName:@"确认" clickCallback:^{
+        XYZSystemAlertViewActionBtn *act = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
             NSLog(@"0");
         }];
-        XYZSystemAlertViewAction *act1 = [XYZSystemAlertViewAction actionWithName:@"取消" clickCallback:^{
+        XYZSystemAlertViewActionBtn *act1 = [XYZSystemAlertViewActionBtn actionWithName:@"取消" clickCallback:^{
             NSLog(@"1");
         }];
-        [_alert addAction:act];
-        [_alert addAction:act1];
+        [_alert addActionBtn:act];
+        [_alert addActionBtn:act1];
     }
     else if (_aa % maxIdx == 5) {
         _alert = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题" msg:@"我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述"];
     }else if (_aa % maxIdx == 6) {
         _alert = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题" msg:@"我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述"];
-        XYZSystemAlertViewAction *act = [XYZSystemAlertViewAction actionWithName:@"确认" clickCallback:^{
+        XYZSystemAlertViewActionBtn *act = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
             NSLog(@"0");
         }];
-        [_alert addAction:act];
+        [_alert addActionBtn:act];
 
     }else if (_aa % maxIdx == 7) {
         _alert = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题" msg:@"我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述"];
-        XYZSystemAlertViewAction *act = [XYZSystemAlertViewAction actionWithName:@"确认" clickCallback:^{
+        XYZSystemAlertViewActionBtn *act = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
             NSLog(@"0");
         }];
-        XYZSystemAlertViewAction *act1 = [XYZSystemAlertViewAction actionWithName:@"取消" clickCallback:^{
+        [act setImage:UIImage.removeImage forState:UIControlStateNormal];
+
+        XYZSystemAlertViewActionBtn *act1 = [XYZSystemAlertViewActionBtn actionWithName:@"取消" clickCallback:^{
             NSLog(@"1");
         }];
-        [_alert addAction:act];
-        [_alert addAction:act1];
+        [_alert addActionBtn:act];
+        [_alert addActionBtn:act1];
     }
     
     _alert.hideOnTouchOutside = YES;

@@ -7,12 +7,59 @@
 
 #import "XYZSystemAlertView.h"
 
-@implementation XYZSystemAlertViewAction
+@implementation XYZSystemAlertViewActionBtn
+{
+    CALayer *_topLine;
+    CALayer *_leftLine;
+    CALayer *_righrLine;
+}
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    CGFloat onePointLine = 1 / [UIScreen mainScreen].scale;
+    
+    if (_topLine) _topLine.frame = CGRectMake(0, 0, self.frame.size.width, onePointLine);
+    
+    if (_leftLine) _leftLine.frame = CGRectMake(0, 0, onePointLine, self.frame.size.height);
+    
+    if (_righrLine) _righrLine.frame = CGRectMake(0, self.frame.size.width - onePointLine, onePointLine, self.frame.size.height);
+}
+
 + (instancetype)actionWithName:(NSString *)name clickCallback:(dispatch_block_t)action {
-    XYZSystemAlertViewAction *act = [[XYZSystemAlertViewAction alloc] init];
-    act.name  = name;
+    XYZSystemAlertViewActionBtn *act = [XYZSystemAlertViewActionBtn buttonWithType:UIButtonTypeCustom];
+    [act setTitle:name forState:UIControlStateNormal];
+    [act setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
+    [act addTarget:act action:@selector(p_clickAction) forControlEvents:UIControlEventTouchUpInside];
     act.action = action;
     return act;
+}
+
+
+- (void)addLineWith:(UIRectEdge)edges {
+    if (edges & UIRectEdgeTop) {
+        [_topLine removeFromSuperlayer];
+        _topLine = [self crearLayer];
+        [self.layer addSublayer:_topLine];
+
+    }
+    if (edges & UIRectEdgeRight) {
+        [_righrLine removeFromSuperlayer];
+        _righrLine = [self crearLayer];
+        [self.layer addSublayer:_righrLine];
+    }
+    if (edges & UIRectEdgeLeft) {
+        [_leftLine removeFromSuperlayer];
+        _leftLine = [self crearLayer];
+        [self.layer addSublayer:_leftLine];
+    }
+}
+- (void)p_clickAction {
+    _action();
+}
+- (CALayer *)crearLayer {
+    CALayer *layer = [CALayer layer];
+    layer.backgroundColor = [UIColor lightGrayColor].CGColor;
+    return layer;
 }
 
 @end
@@ -22,10 +69,13 @@
 
 @interface XYZSystemAlertView()
 {
-    NSMutableArray<XYZSystemAlertViewAction *> *_actions;
+    NSMutableArray<XYZSystemAlertViewActionBtn *> *_actions;
 }
 @property (nonatomic) UILabel *titleLabel;
 @property (nonatomic) UILabel *msgLabel;
+
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *message;
 @end
 @implementation XYZSystemAlertView
 
@@ -44,7 +94,7 @@
     return self;
 }
 
-- (void)addAction:(XYZSystemAlertViewAction *)action {
+- (void)addActionBtn:(XYZSystemAlertViewActionBtn *)action {
     if (!action) {
         return;
     }
@@ -102,11 +152,14 @@
         UIStackView *hstack = [[UIStackView alloc] init];
         hstack.spacing = 0;
         hstack.distribution = UIStackViewDistributionFillEqually;
-        [_actions enumerateObjectsUsingBlock:^(XYZSystemAlertViewAction * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            
-            UIButton *btn = [self btn_WithAction:obj];
-            btn.tag = idx;
-            [hstack addArrangedSubview:btn];
+        [_actions enumerateObjectsUsingBlock:^(XYZSystemAlertViewActionBtn * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+
+            [hstack addArrangedSubview:obj];
+            if (idx == 0) {
+                [obj addLineWith:UIRectEdgeTop];
+            }else {
+                [obj addLineWith:UIRectEdgeTop | UIRectEdgeLeft];
+            }
         }];
         [bgview addSubview:hstack];
         hstack.translatesAutoresizingMaskIntoConstraints = NO;
@@ -116,6 +169,7 @@
         [hstack.bottomAnchor constraintEqualToAnchor:bgview.bottomAnchor].active = YES;
         [hstack.heightAnchor constraintEqualToConstant:49].active = YES;
     }
+    
     
     [super showInView:view];
 }
@@ -143,17 +197,6 @@
     }
     return _msgLabel;
 }
-- (UIButton *)btn_WithAction:(XYZSystemAlertViewAction *)act {
-    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btn setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
-    [btn setTitle:act.name forState:UIControlStateNormal];
-    [btn setAttributedTitle:act.attributeName forState:UIControlStateNormal];
-    [btn addTarget:self action:@selector(btn_clcik:) forControlEvents:UIControlEventTouchUpInside];
-    
-    return btn;
-}
-#pragma mark - action
-- (void)btn_clcik:(UIButton *)btn {
-    _actions[btn.tag].action();
-}
+
+
 @end

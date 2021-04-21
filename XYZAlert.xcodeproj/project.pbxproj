@@ -114,7 +114,6 @@
 		5B02F3D72625A95A0023FC84 /* Tool */ = {
 			isa = PBXGroup;
 			children = (
-				5B979F42262EB54700201B56 /* XYZAlertProtocol.h */,
 				5B02F3D82625A99A0023FC84 /* XYZHookTool.h */,
 				5B02F3D92625A99A0023FC84 /* XYZHookTool.m */,
 			);
@@ -124,6 +123,7 @@
 		5B979F4A262EBBA800201B56 /* Dispatch */ = {
 			isa = PBXGroup;
 			children = (
+				5B979F42262EB54700201B56 /* XYZAlertProtocol.h */,
 				5B02F3C62625929B0023FC84 /* XYZAlertQueue.h */,
 				5B02F3C72625929B0023FC84 /* XYZAlertQueue.m */,
 				5B02F3CA26259CCD0023FC84 /* XYZAlertDispatch.h */,
