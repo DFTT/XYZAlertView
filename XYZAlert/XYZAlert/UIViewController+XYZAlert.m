@@ -44,7 +44,7 @@
         
     }
     if (transitioning) {
-        // 转场中不播放
+        // 转场中
         return NO;
     }
     return YES;
@@ -62,14 +62,15 @@
     
     [self setIsAppear:YES];
     
-    XYZAlertDispatch *tmp = [self alertDispahIfExist];
-    [tmp tryDispatch];
+    [[self alertDispahIfExist] bindedVCDidAppear];
 }
 
 - (void)xyzAlert_viewDidDisappear:(BOOL)animation {
     [self xyzAlert_viewDidDisappear:animation];
     
     [self setIsAppear:NO];
+    
+    [[self alertDispahIfExist] bindedVCDidDisappear];
 }
 
 #pragma mark - Lazy
@@ -88,9 +89,6 @@
     }
     return dispath;
 }
-
-
-
 
 
 @end

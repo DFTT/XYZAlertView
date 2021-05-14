@@ -30,23 +30,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 
-
+typedef NS_ENUM(NSInteger, XYZAlertState) {
+    XYZAlertStatePrepare = 0,   // 准备中
+    XYZAlertStateReady,     // 已经准备好 可以接受展现调度
+    XYZAlertStateShowing,   // 展现中
+    XYZAlertStateTmpHidden, // 绑定的页面消失 所以临时被隐藏
+    XYZAlertStateEnd,       // 结束销毁
+};
 
 @protocol XYZAlertEnableDispatchProtocal <NSObject>
 
-// 通知调度器
-@property (nonatomic, weak  ) id<XYZAlertLifeProtocal> weakDispatch;
-
 // 唯一标示
-@property (nonatomic, copy  ) NSString *alertID;
+@property (nonatomic, copy, nullable) NSString *alertID;
 
 // 优先级
 @property (nonatomic, assign) int priority;
 
-// 是否已经准备完成
-@property (nonatomic, assign, readonly) BOOL ready;
-// 如果设置YES, 则立即尝试进行展示
-- (void)setDidReady:(BOOL)ready;
+// 状态
+@property (nonatomic, assign, readonly) XYZAlertState curState;
+// 标记已准备好, 立即尝试进行展示
+- (void)setReadyAndTryDispath;
 
 // 可以覆盖其它弹窗
 @property (nonatomic, assign) BOOL enableCoverOther;
@@ -54,11 +57,17 @@ NS_ASSUME_NONNULL_BEGIN
 // 依赖其他弹窗的标识数组
 @property (nonatomic, readonly) NSSet<NSString *> *dependencyAlertIDSet;
 // 添加展示前对其他弹窗的依赖 (依赖的alert展示结束后 自己才允许展示)
-- (void)addDependencyAlerID:(NSString *)alertid;
+- (void)addDependencyAlertID:(NSString *)alertid;
 
-// 展现
+
+// 调度器
+@property (nonatomic, weak  ) id<XYZAlertLifeProtocal> weakDispatch;
+
+// 被调度->展现
 - (void)dispatchAlertViewShowOn:(UIView *)view;
 
+// 被调度->临时隐藏/展现
+- (void)dispatchAlertTmpHidden:(BOOL)hidden;
 @end
 
 

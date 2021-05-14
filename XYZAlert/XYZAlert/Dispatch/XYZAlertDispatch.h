@@ -15,16 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 调度合适的Alert进行展示
 /// 规则:  已经ready & 无未展示dependency & 优先高优先级
-- (void)tryDispatch;
+- (void)bindedVCDidAppear;
 
+/// 暂时隐藏当前VC绑定的Alerts
+- (void)bindedVCDidDisappear;
 
-
-
-// 添加一个Alert 并尝试展示
-- (void)dispatchAlerts:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)alerts;
-
-// 添加多个Alert 并尝试展示
-- (void)dispatchAlert:(id<XYZAlertEnableDispatchProtocal>)alert;
+// 添加Alert 并尝试展示
+- (void)addAlerts:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)alerts;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -18,20 +18,18 @@
 @synthesize weakDispatch;
 @synthesize alertID;
 @synthesize priority;
-@synthesize ready;
+@synthesize curState;
 @synthesize enableCoverOther;
 @synthesize dependencyAlertIDSet;
 
-- (void)setDidReady:(BOOL)newReady {
-    if (ready != newReady) {
-        ready = newReady;
-        
-        if (newReady == YES) {
-            [weakDispatch alertDidReady:self];
-        }
+- (void)setReadyAndTryDispath {
+    if (curState == XYZAlertStatePrepare) {
+        curState = XYZAlertStateReady;
+        [weakDispatch alertDidReady:self];
     }
 }
-- (void)addDependencyAlerID:(NSString *)alertid {
+
+- (void)addDependencyAlertID:(NSString *)alertid {
     if (!alertid || alertid.length == 0) {
         return;
     }
@@ -50,7 +48,17 @@
     dependencyAlertIDSet = mset;
 }
 - (void)dispatchAlertViewShowOn:(UIView *)view {
-    [self showInView:view];
+    [self showOnView:view];
+    curState = XYZAlertStateShowing;
+}
+-  (void)dispatchAlertTmpHidden:(BOOL)hidden {
+    if (hidden) {
+        curState = XYZAlertStateTmpHidden;
+        self.hidden = YES;
+    }else {
+        curState = XYZAlertStateShowing;
+        self.hidden = NO;
+    }
 }
 
 #pragma mark - init
@@ -63,6 +71,7 @@
         }else {
             _containerAlertViewMaxSize = CGSizeMake(310, 500);
         }
+        curState = XYZAlertStatePrepare;
         _containerAlertViewRoundValue = 10;
         _backAlpha  = 0.3;
     }
@@ -71,7 +80,10 @@
 
 
 
-- (void)showInView:(UIView *)view {
+- (void)showOnView:(UIView *)view {
+    if (_showOnView) {
+        view = _showOnView;
+    }
     if (!view) {
         return;
     }
@@ -103,6 +115,7 @@
     void(^completion)(void) = ^(){
         [self removeFromSuperview];
         [self->weakDispatch alertDidRemoveFromSuperView:self];
+        self->curState = XYZAlertStateEnd;
     };
 
     if (animation) {

@@ -79,13 +79,7 @@
 @end
 @implementation XYZSystemAlertView
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self setDidReady:YES];
-    }
-    return self;
-}
+
 - (instancetype)initWithTitle:(NSString *)title msg:(NSString *)msg {
     if (self = [self initWithFrame:CGRectZero]) {
         _title = title;
@@ -108,11 +102,8 @@
 }
 
 #pragma mark - override
-//- (BOOL)ready {
-//    return YES;
-//}
 
-- (void)showInView:(UIView *)view {
+- (void)showOnView:(UIView *)view {
     UIView *bgview = self.containerAlertView;
     
     UIStackView *stack = [[UIStackView alloc] init];
@@ -171,7 +162,7 @@
     }
     
     
-    [super showInView:view];
+    [super showOnView:view];
 }
 
 #pragma mark - get

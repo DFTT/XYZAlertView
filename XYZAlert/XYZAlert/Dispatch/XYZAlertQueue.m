@@ -83,7 +83,7 @@
     __block id<XYZAlertEnableDispatchProtocal> target = nil;
     [_items enumerateObjectsUsingBlock:^(id<XYZAlertEnableDispatchProtocal> _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
-        if (NO == obj.ready) {
+        if (XYZAlertStateReady != obj.curState) {
             // 未准备好 跳过
             return;
         }
@@ -114,7 +114,8 @@
     __block NSInteger targetIdx = -1;
     __block id<XYZAlertEnableDispatchProtocal> target = nil;
     [_items enumerateObjectsUsingBlock:^(id<XYZAlertEnableDispatchProtocal> _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (NO == obj.ready) {
+        
+        if (XYZAlertStateReady != obj.curState) {
             // 未准备好 跳过
             return;
         }

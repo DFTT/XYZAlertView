@@ -31,8 +31,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat backAlpha;
 
 
+/// 可以提前指定一个父视图 展示时会优先添加到这个视图上
+@property (nonatomic, weak  ) UIView *showOnView;
+
 /// 展现
-- (void)showInView:(UIView *)view;
+- (void)showOnView:(UIView *)view;
 /// 消失
 - (void)dismissWithAnimation:(BOOL)animation;
 

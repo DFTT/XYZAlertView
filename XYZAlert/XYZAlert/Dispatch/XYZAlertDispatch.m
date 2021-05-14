@@ -11,7 +11,7 @@
 @implementation XYZAlertDispatch
 {
     XYZAlertQueue *_queue;
-    // 显示在上层的 排序在前面
+    // 显示在上层的 排序在后面
     NSMutableArray<id<XYZAlertEnableDispatchProtocal>> *_showingAlerts;
     
     UIView * (^_verifyBlock)(void); // 展示前需要验证 当前VC/Window是否在展示中
@@ -21,6 +21,7 @@
     self = [super init];
     if (self) {
         _queue = [[XYZAlertQueue alloc] init];
+        _showingAlerts = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -29,19 +30,27 @@
     tmp->_verifyBlock = [block copy];
     return tmp;
 }
-- (void)dispatchAlert:(id<XYZAlertEnableDispatchProtocal>)alert {
-    [_queue addItem:alert];
-    alert.weakDispatch = self;
-    [self tryDispatch];
-}
-- (void)dispatchAlerts:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)alerts {
-    [_queue addItems:alerts];
+
+- (void)addAlerts:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)alerts {
     for (id<XYZAlertEnableDispatchProtocal> tmp in alerts) {
         tmp.weakDispatch = self;
     }
-    [self tryDispatch];
+    [_queue addItems:alerts];
+    [self p__tryDispatch];
 }
-- (void)tryDispatch {
+- (void)bindedVCDidAppear {
+    for (id<XYZAlertEnableDispatchProtocal> tmp in _showingAlerts) {
+        [tmp dispatchAlertTmpHidden:NO];
+    }
+    [self p__tryDispatch];
+}
+- (void)bindedVCDidDisappear {
+    for (id<XYZAlertEnableDispatchProtocal> tmp in _showingAlerts) {
+        [tmp dispatchAlertTmpHidden:YES];
+    }
+}
+
+- (void)p__tryDispatch {
     dispatch_async(dispatch_get_main_queue(), ^{
         // 主要是为了延迟一次runloop ()
         // 其次保证主线程
@@ -66,17 +75,18 @@
     }
     
     if (alert) {
-        [_showingAlerts insertObject:alert atIndex:0];
         [alert dispatchAlertViewShowOn:view];
+        [_showingAlerts addObject:alert];
     }
 }
+
 #pragma mark - XYZAlertLifeProtocal
 - (void)alertDidReady:(id<XYZAlertEnableDispatchProtocal>)alert {
-    [self tryDispatch];
+    [self p__tryDispatch];
 }
 - (void)alertDidRemoveFromSuperView:(id<XYZAlertEnableDispatchProtocal>)alert {
     [_showingAlerts removeObject:alert];
-    [self tryDispatch];
+    [self p__tryDispatch];
 }
 
 @end

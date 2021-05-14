@@ -20,6 +20,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.view.backgroundColor = UIColor.whiteColor;
+    
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
     btn.frame = CGRectMake(0, 0, 200, 50);
     [btn setTitle:@"SimpleAlet样式 点击循环展示" forState:UIControlStateNormal];
@@ -37,58 +39,51 @@
 }
 
 - (void)_____dependAlert {
-    XYZSystemAlertView *alert1 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题1" msg:@"我的是描述描述描述描述描述描述"];
-    XYZSystemAlertViewActionBtn *ac1 = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
-        NSLog(@"0");
+    XYZSystemAlertViewActionBtn *act1 = [XYZSystemAlertViewActionBtn actionWithName:@"点击跳转测试页面" clickCallback:^{
+        
+        [self.navigationController pushViewController:[ViewController new] animated:YES];
     }];
-    [alert1 addActionBtn:ac1];
-    [alert1 setDidReady:NO];
+    XYZSystemAlertView *alert1 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题1" msg:@"我的是描述描述描述描述描述描述"];
+    [alert1 addActionBtn:act1];
     alert1.alertID = @"1";
     
     XYZSystemAlertView *alert2 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题2" msg:@"我的是描述描述描述描述描述描述"];
-    XYZSystemAlertViewActionBtn *act2 = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
-        NSLog(@"0");
-    }];
-    [alert2 addActionBtn:act2];
-    [alert2 setDidReady:NO];
+    [alert2 addActionBtn:act1];
     alert2.alertID = @"2";
     
     XYZSystemAlertView *alert3 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题3" msg:@"我的是描述描述描述描述描述描述"];
-    XYZSystemAlertViewActionBtn *act3 = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
-        NSLog(@"0");
-    }];
-    [alert3 setDidReady:NO];
-    [alert3 addActionBtn:act3];
+    [alert3 addActionBtn:act1];
     alert3.alertID = @"3";
+    alert3.showOnView = self.navigationController.view;
 
     
-//    [alert1 setDidReady:YES];
-//    [alert2 setDidReady:YES];
-//    [alert3 setDidReady:YES];
+//    [alert1 setReadyAndTryDispath];
+//    [alert2 setReadyAndTryDispath];
+//    [alert3 setReadyAndTryDispath];
     
     alert1.hideOnTouchOutside = YES;
     alert2.hideOnTouchOutside = YES;
     alert3.hideOnTouchOutside = YES;
     
     
-    [alert1 addDependencyAlerID:@"2"];
-    [alert2 addDependencyAlerID:@"3"];
+    [alert1 addDependencyAlertID:@"2"];
+    [alert2 addDependencyAlertID:@"3"];
     
 //    alert1.priority = 1;
 //    alert2.priority = 2;
 //    alert3.priority = 3;
     
-    [self.alertDispah dispatchAlerts:@[alert1, alert2, alert3]];
+    [self.alertDispah addAlerts:@[alert1, alert2, alert3]];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [alert1 setDidReady:YES];
+        [alert1 setReadyAndTryDispath];
         NSLog(@"1 已完成 但依赖2未完成");
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [alert2 setDidReady:YES];
+            [alert2 setReadyAndTryDispath];
             NSLog(@"2 已完成 但依赖3未完成");
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 NSLog(@"3 已完成 先展示3");
-                [alert3 setDidReady:YES];
+                [alert3 setReadyAndTryDispath];
             });
         });
     });
@@ -152,7 +147,7 @@
     }
     
     _alert.hideOnTouchOutside = YES;
-    [_alert showInView:self.view];
+    [_alert showOnView:self.view];
 }
 
 @end
