@@ -36,8 +36,19 @@
     [btn2 addTarget:self action:@selector(_____dependAlert) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn2];
     btn2.center = CGPointMake(self.view.bounds.size.width / 2, self.view.bounds.size.height / 3 * 2);
+    
+    
+    
+    UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(30, 0, 300, 50)];
+    tf.placeholder = @"我是输入框";
+    [self.navigationController.navigationBar addSubview:tf];
+    
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(hiddenKB)];
+    [self.navigationItem setRightBarButtonItem:item];
 }
-
+- (void)hiddenKB {
+    [self.navigationController.view endEditing:YES];
+}
 - (void)_____dependAlert {
     XYZSystemAlertViewActionBtn *act1 = [XYZSystemAlertViewActionBtn actionWithName:@"点击跳转测试页面" clickCallback:^{
         
@@ -133,7 +144,7 @@
         [_alert addActionBtn:act];
 
     }else if (_aa % maxIdx == 7) {
-        _alert = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题" msg:@"我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述"];
+        _alert = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题" msg:@"我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描述我是描"];
         XYZSystemAlertViewActionBtn *act = [XYZSystemAlertViewActionBtn actionWithName:@"确认" clickCallback:^{
             NSLog(@"0");
         }];

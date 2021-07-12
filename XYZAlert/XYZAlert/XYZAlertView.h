@@ -30,6 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// defult 0.3
 @property (nonatomic, assign) CGFloat backAlpha;
 
+/// 自动躲避键盘 (键盘弹出时 自动往上便宜键盘的高度)
+/// defult YES
+@property (nonatomic, assign) BOOL autoAvoidKeyboard;
+
 
 /// 可以提前指定一个父视图 展示时会优先添加到这个视图上
 @property (nonatomic, weak  ) UIView *showOnView;

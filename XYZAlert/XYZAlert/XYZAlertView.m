@@ -60,7 +60,47 @@
         self.hidden = NO;
     }
 }
-
+#pragma mark - avoidKeyBoard
+- (void)setAutoAvoidKeyboard:(BOOL)autoAvoidKeyboard {
+    if (_autoAvoidKeyboard != autoAvoidKeyboard) {
+        _autoAvoidKeyboard = autoAvoidKeyboard;
+        if (autoAvoidKeyboard) {
+            [self observeKeyboardNotify];
+        }else {
+            [self rmKeyboardNotifyObserver];
+        }
+    }
+}
+- (void)observeKeyboardNotify {
+    [self rmKeyboardNotifyObserver];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reciveKeyboardNotification:) name:UIKeyboardWillChangeFrameNotification object:nil];
+}
+- (void)rmKeyboardNotifyObserver {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+}
+- (void)reciveKeyboardNotification:(NSNotification *)notify {
+    if (self.window == nil) {
+        return;
+    }
+    CGRect kbToRect = [notify.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGFloat animationDuration = [notify.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    BOOL kbToShow = CGRectGetMinY(kbToRect) < [UIScreen mainScreen].bounds.size.height;
+    CGRect alertRect = [self.containerAlertView convertRect:self.containerAlertView.bounds toView:self.window];
+    
+    CGFloat offsetY = CGRectGetMaxY(alertRect) - CGRectGetMinY(kbToRect);
+    CGAffineTransform transf = CGAffineTransformIdentity;
+    if (kbToShow) {
+        if (offsetY <= 0) {
+            return;
+        }
+        transf = CGAffineTransformMakeTranslation(0, -offsetY);
+    }
+    
+    [UIView animateWithDuration:animationDuration > 0 ? animationDuration : 0.2 animations:^{
+        self.containerAlertView.transform = transf;
+    }];
+}
 #pragma mark - init
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -74,6 +114,8 @@
         curState = XYZAlertStatePrepare;
         _containerAlertViewRoundValue = 10;
         _backAlpha  = 0.3;
+        
+        self.autoAvoidKeyboard = YES;
     }
     return self;
 }
@@ -134,6 +176,8 @@
 
 #pragma mark - override
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [self endEditing:YES];
+
     if (_hideOnTouchOutside == NO) {
         [super touchesBegan:touches withEvent:event];
         return;
