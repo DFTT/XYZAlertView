@@ -74,11 +74,45 @@
 - (void)observeKeyboardNotify {
     [self rmKeyboardNotifyObserver];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reciveKeyboardNotification:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(kb_willShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(kb_willHidden:) name:UIKeyboardWillHideNotification object:nil];
+
 }
 - (void)rmKeyboardNotifyObserver {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 }
+- (void)kb_willShow:(NSNotification *)notify {
+    [self p_reciveKeyboardNotification:notify frWillShow:YES];
+}
+- (void)kb_willHidden:(NSNotification *)notify {
+    [self p_reciveKeyboardNotification:notify frWillShow:NO];
+}
+- (void)p_reciveKeyboardNotification:(NSNotification *)notify frWillShow:(BOOL)willShow {
+    if (self.window == nil) {
+        return;
+    }
+
+    CGRect kbToRect = [notify.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGFloat animationDuration = [notify.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    
+    CGRect alertRect = [self.containerAlertView convertRect:self.containerAlertView.bounds toView:self.window];
+
+    CGFloat offsetY = CGRectGetMaxY(alertRect) - CGRectGetMinY(kbToRect);
+    CGAffineTransform transf = CGAffineTransformIdentity;
+    if (willShow) {
+        if (offsetY <= 0) {
+            return;
+        }
+        transf = CGAffineTransformMakeTranslation(0, -offsetY + self.avoidKeyboardOffsetY);
+    }
+    
+    [UIView animateWithDuration:animationDuration > 0 ? animationDuration : 0.2 animations:^{
+        self.containerAlertView.transform = transf;
+    }];
+}
+
+
 - (void)reciveKeyboardNotification:(NSNotification *)notify {
     if (self.window == nil) {
         return;

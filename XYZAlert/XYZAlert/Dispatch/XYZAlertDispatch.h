@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 暂时隐藏当前VC绑定的Alerts
 - (void)bindedVCDidDisappear;
 
-// 添加Alert 并尝试展示
+// 建议使用此方法 添加Alert 并尝试展示
 - (void)addAlerts:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)alerts;
 @end
 

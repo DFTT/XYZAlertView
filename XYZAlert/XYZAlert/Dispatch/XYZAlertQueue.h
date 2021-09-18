@@ -29,8 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addItem:(id<XYZAlertEnableDispatchProtocal>)item;
 - (void)addItems:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)items;
 
-
-
 @end
 
 NS_ASSUME_NONNULL_END
