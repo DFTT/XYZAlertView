@@ -72,10 +72,6 @@
 //    [alert2 setReadyAndTryDispath];
 //    [alert3 setReadyAndTryDispath];
     
-    alert1.hideOnTouchOutside = YES;
-    alert2.hideOnTouchOutside = YES;
-    alert3.hideOnTouchOutside = YES;
-    
     
     [alert1 addDependencyAlertID:@"2"];
     [alert2 addDependencyAlertID:@"3"];
@@ -93,8 +89,14 @@
             [alert2 setReadyAndTryDispath];
             NSLog(@"2 已完成 但依赖3未完成");
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                NSLog(@"3 已完成 先展示3");
-                [alert3 setReadyAndTryDispath];
+                
+                if (arc4random() % 2) {
+                    NSLog(@"3 已完成 先展示3");
+                    [alert3 setReadyAndTryDispath];
+                }else {
+                    NSLog(@"3 放弃展示, 按照依赖只能展示2");
+                    [alert3 setCancelAndRemoveFromDispatch];
+                }
             });
         });
     });
@@ -157,7 +159,7 @@
         [_alert addActionBtn:act1];
     }
     
-    _alert.hideOnTouchOutside = YES;
+    
     [_alert showOnView:self.view];
 }
 

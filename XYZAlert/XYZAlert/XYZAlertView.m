@@ -19,16 +19,21 @@
 @synthesize alertID;
 @synthesize priority;
 @synthesize curState;
-@synthesize enableCoverOther;
+@synthesize exclusiveBehavior;
 @synthesize dependencyAlertIDSet;
 
 - (void)setReadyAndTryDispath {
     if (curState == XYZAlertStatePrepare) {
         curState = XYZAlertStateReady;
-        [weakDispatch alertDidReady:self];
+        [weakDispatch alert:self readyed:YES];
     }
 }
-
+- (void)setCancelAndRemoveFromDispatch {
+    if (curState == XYZAlertStatePrepare) {
+        curState = XYZAlertStateEnd;
+        [weakDispatch alert:self readyed:NO];
+    }
+}
 - (void)addDependencyAlertID:(NSString *)alertid {
     if (!alertid || alertid.length == 0) {
         return;
@@ -51,7 +56,7 @@
     [self showOnView:view];
     curState = XYZAlertStateShowing;
 }
--  (void)dispatchAlertTmpHidden:(BOOL)hidden {
+- (void)dispatchAlertTmpHidden:(BOOL)hidden {
     if (hidden) {
         curState = XYZAlertStateTmpHidden;
         self.hidden = YES;
@@ -149,7 +154,8 @@
         _containerAlertViewRoundValue = 10;
         _backAlpha  = 0.3;
         
-        self.autoAvoidKeyboard = YES;
+        _hideOnTouchOutside = YES;
+        _autoAvoidKeyboard = YES;
     }
     return self;
 }
@@ -190,8 +196,8 @@
 - (void)dismissWithAnimation:(BOOL)animation {
     void(^completion)(void) = ^(){
         [self removeFromSuperview];
-        [self->weakDispatch alertDidRemoveFromSuperView:self];
         self->curState = XYZAlertStateEnd;
+        [self->weakDispatch alertDidRemoveFromSuperView:self];
     };
 
     if (animation) {

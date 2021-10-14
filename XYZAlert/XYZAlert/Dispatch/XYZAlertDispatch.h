@@ -14,7 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)distachWithVerifyBlock:(UIView *(^)(void))block;
 
 /// 调度合适的Alert进行展示
-/// 规则:  已经ready & 无未展示dependency & 优先高优先级
+/// 规则:
+/// 第一步: 按照优先级高->低进行判断
+/// 第二部: 已经ready & 无未展示dependency -> 展示
 - (void)bindedVCDidAppear;
 
 /// 暂时隐藏当前VC绑定的Alerts
