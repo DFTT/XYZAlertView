@@ -73,33 +73,31 @@
 //    [alert3 setReadyAndTryDispath];
     
     
-    [alert1 addDependencyAlertID:@"2"];
-    [alert2 addDependencyAlertID:@"3"];
+//    [alert1 addDependencyAlertID:@"2"];
+//    [alert2 addDependencyAlertID:@"3"];
     
-//    alert1.priority = 1;
-//    alert2.priority = 2;
-//    alert3.priority = 3;
+    alert1.priority = 3;
+    alert2.priority = 2;
+    alert3.priority = 1;
+    
+    alert1.exclusiveBehavior = XYZAlertExclusiveBehaviorHiddenOther;
+    
+//    [alert1 addDependencyAlertID:@"3"];
     
     [self.alertDispah addAlerts:@[alert1, alert2, alert3]];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [alert1 setReadyAndTryDispath];
-        NSLog(@"1 已完成 但依赖2未完成");
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [alert2 setReadyAndTryDispath];
-            NSLog(@"2 已完成 但依赖3未完成");
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                
-                if (arc4random() % 2) {
-                    NSLog(@"3 已完成 先展示3");
-                    [alert3 setReadyAndTryDispath];
-                }else {
-                    NSLog(@"3 放弃展示, 按照依赖只能展示2");
-                    [alert3 setCancelAndRemoveFromDispatch];
-                }
-            });
-        });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [alert1 setCancelAndRemoveFromDispatch];
     });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [alert2 setReadyAndTryDispath];
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [alert3 setReadyAndTryDispath];
+    });
+
 }
 - (void)_____XYZSimpleAlet {
     [_alert dismissWithAnimation:NO];

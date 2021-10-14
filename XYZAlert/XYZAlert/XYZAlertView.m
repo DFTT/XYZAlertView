@@ -155,7 +155,7 @@
         _backAlpha  = 0.3;
         
         _hideOnTouchOutside = YES;
-        _autoAvoidKeyboard = YES;
+        self.autoAvoidKeyboard = YES;
     }
     return self;
 }
