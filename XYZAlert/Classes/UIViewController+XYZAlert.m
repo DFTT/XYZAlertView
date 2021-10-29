@@ -7,24 +7,39 @@
 
 #import "UIViewController+XYZAlert.h"
 #import <objc/runtime.h>
-#import "XYZHookTool.h"
 
 @implementation UIViewController (XYZAlert)
 
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        
+        void(^__swizzleSel)(Class, SEL, SEL) = ^(Class aClass, SEL originalSelector, SEL swizzledSelector) {
+            
+            Method originalMethod = class_getInstanceMethod(aClass, originalSelector);
+            Method swizzledMethod = class_getInstanceMethod(aClass, swizzledSelector);
+            BOOL didAddMethod = class_addMethod(aClass,
+                                                originalSelector,
+                                                method_getImplementation(swizzledMethod),
+                                                method_getTypeEncoding(swizzledMethod));
+            if (didAddMethod) {
+                class_replaceMethod(aClass,
+                                    swizzledSelector,
+                                    method_getImplementation(originalMethod),
+                                    method_getTypeEncoding(originalMethod));
+            } else {
+                method_exchangeImplementations(originalMethod, swizzledMethod);
+            }
+        };
+        
         SEL originalSelector_1 = @selector(viewDidAppear:);
         SEL swizzledSelector_1 = @selector(xyzAlert_viewDidAppear:);
-        [XYZHookTool xyz_swizzleMethodForClass:[self class]
-                              originalSelector:originalSelector_1
-                              swizzledSelector:swizzledSelector_1];
+        __swizzleSel([self class], originalSelector_1, swizzledSelector_1);
         
+
         SEL originalSelector_2 = @selector(viewDidDisappear:);
         SEL swizzledSelector_2 = @selector(xyzAlert_viewDidDisappear:);
-        [XYZHookTool xyz_swizzleMethodForClass:[self class]
-                              originalSelector:originalSelector_2
-                              swizzledSelector:swizzledSelector_2];
+        __swizzleSel([self class], originalSelector_2, swizzledSelector_2);
     });
 }
 

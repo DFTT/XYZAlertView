@@ -14,12 +14,11 @@
 		5B02F3AF2625812E0023FC84 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B02F3AE2625812E0023FC84 /* Assets.xcassets */; };
 		5B02F3B22625812E0023FC84 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B02F3B02625812E0023FC84 /* LaunchScreen.storyboard */; };
 		5B02F3B52625812E0023FC84 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B02F3B42625812E0023FC84 /* main.m */; };
-		5B02F3C82625929B0023FC84 /* XYZAlertQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B02F3C72625929B0023FC84 /* XYZAlertQueue.m */; };
-		5B02F3CC26259CCD0023FC84 /* XYZAlertDispatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B02F3CB26259CCD0023FC84 /* XYZAlertDispatch.m */; };
-		5B02F3D12625A0A80023FC84 /* UIViewController+XYZAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B02F3D02625A0A80023FC84 /* UIViewController+XYZAlert.m */; };
-		5B02F3DA2625A99A0023FC84 /* XYZHookTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B02F3D92625A99A0023FC84 /* XYZHookTool.m */; };
-		5B979F1A262D840C00201B56 /* XYZAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B979F19262D840C00201B56 /* XYZAlertView.m */; };
-		5B979F48262EBB9700201B56 /* XYZSystemAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B979F47262EBB9700201B56 /* XYZSystemAlertView.m */; };
+		5B148BED272C0A6E00C01ABF /* XYZAlertQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B148BE1272C0A6E00C01ABF /* XYZAlertQueue.m */; };
+		5B148BEE272C0A6E00C01ABF /* XYZAlertDispatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B148BE3272C0A6E00C01ABF /* XYZAlertDispatch.m */; };
+		5B148BEF272C0A6E00C01ABF /* UIViewController+XYZAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B148BE5272C0A6E00C01ABF /* UIViewController+XYZAlert.m */; };
+		5B148BF0272C0A6E00C01ABF /* XYZAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B148BE7272C0A6E00C01ABF /* XYZAlertView.m */; };
+		5B148BF1272C0A6E00C01ABF /* XYZSystemAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B148BE8272C0A6E00C01ABF /* XYZSystemAlertView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,19 +34,17 @@
 		5B02F3B12625812E0023FC84 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5B02F3B32625812E0023FC84 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5B02F3B42625812E0023FC84 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		5B02F3C62625929B0023FC84 /* XYZAlertQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XYZAlertQueue.h; sourceTree = "<group>"; };
-		5B02F3C72625929B0023FC84 /* XYZAlertQueue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XYZAlertQueue.m; sourceTree = "<group>"; };
-		5B02F3CA26259CCD0023FC84 /* XYZAlertDispatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XYZAlertDispatch.h; sourceTree = "<group>"; };
-		5B02F3CB26259CCD0023FC84 /* XYZAlertDispatch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XYZAlertDispatch.m; sourceTree = "<group>"; };
-		5B02F3CF2625A0A80023FC84 /* UIViewController+XYZAlert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+XYZAlert.h"; sourceTree = "<group>"; };
-		5B02F3D02625A0A80023FC84 /* UIViewController+XYZAlert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+XYZAlert.m"; sourceTree = "<group>"; };
-		5B02F3D82625A99A0023FC84 /* XYZHookTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XYZHookTool.h; sourceTree = "<group>"; };
-		5B02F3D92625A99A0023FC84 /* XYZHookTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XYZHookTool.m; sourceTree = "<group>"; };
-		5B979F18262D840C00201B56 /* XYZAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XYZAlertView.h; sourceTree = "<group>"; };
-		5B979F19262D840C00201B56 /* XYZAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XYZAlertView.m; sourceTree = "<group>"; };
-		5B979F42262EB54700201B56 /* XYZAlertProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XYZAlertProtocol.h; sourceTree = "<group>"; };
-		5B979F46262EBB9700201B56 /* XYZSystemAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XYZSystemAlertView.h; sourceTree = "<group>"; };
-		5B979F47262EBB9700201B56 /* XYZSystemAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XYZSystemAlertView.m; sourceTree = "<group>"; };
+		5B148BDE272C0A6E00C01ABF /* XYZAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYZAlertView.h; sourceTree = "<group>"; };
+		5B148BE0272C0A6E00C01ABF /* XYZAlertDispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYZAlertDispatch.h; sourceTree = "<group>"; };
+		5B148BE1272C0A6E00C01ABF /* XYZAlertQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XYZAlertQueue.m; sourceTree = "<group>"; };
+		5B148BE2272C0A6E00C01ABF /* XYZAlertQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYZAlertQueue.h; sourceTree = "<group>"; };
+		5B148BE3272C0A6E00C01ABF /* XYZAlertDispatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XYZAlertDispatch.m; sourceTree = "<group>"; };
+		5B148BE4272C0A6E00C01ABF /* XYZAlertProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYZAlertProtocol.h; sourceTree = "<group>"; };
+		5B148BE5272C0A6E00C01ABF /* UIViewController+XYZAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+XYZAlert.m"; sourceTree = "<group>"; };
+		5B148BE6272C0A6E00C01ABF /* XYZSystemAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYZSystemAlertView.h; sourceTree = "<group>"; };
+		5B148BE7272C0A6E00C01ABF /* XYZAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XYZAlertView.m; sourceTree = "<group>"; };
+		5B148BE8272C0A6E00C01ABF /* XYZSystemAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XYZSystemAlertView.m; sourceTree = "<group>"; };
+		5B148BE9272C0A6E00C01ABF /* UIViewController+XYZAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+XYZAlert.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +77,7 @@
 		5B02F3A12625812B0023FC84 /* XYZAlert */ = {
 			isa = PBXGroup;
 			children = (
-				5B02F3BE2625815E0023FC84 /* XYZAlert */,
+				5B148BDD272C0A6E00C01ABF /* Classes */,
 				5B02F3A22625812B0023FC84 /* AppDelegate.h */,
 				5B02F3A32625812B0023FC84 /* AppDelegate.m */,
 				5B02F3A52625812B0023FC84 /* SceneDelegate.h */,
@@ -96,38 +93,28 @@
 			path = XYZAlert;
 			sourceTree = "<group>";
 		};
-		5B02F3BE2625815E0023FC84 /* XYZAlert */ = {
+		5B148BDD272C0A6E00C01ABF /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				5B02F3D72625A95A0023FC84 /* Tool */,
-				5B979F4A262EBBA800201B56 /* Dispatch */,
-				5B02F3CF2625A0A80023FC84 /* UIViewController+XYZAlert.h */,
-				5B02F3D02625A0A80023FC84 /* UIViewController+XYZAlert.m */,
-				5B979F18262D840C00201B56 /* XYZAlertView.h */,
-				5B979F19262D840C00201B56 /* XYZAlertView.m */,
-				5B979F46262EBB9700201B56 /* XYZSystemAlertView.h */,
-				5B979F47262EBB9700201B56 /* XYZSystemAlertView.m */,
+				5B148BDF272C0A6E00C01ABF /* Dispatch */,
+				5B148BE9272C0A6E00C01ABF /* UIViewController+XYZAlert.h */,
+				5B148BE5272C0A6E00C01ABF /* UIViewController+XYZAlert.m */,
+				5B148BDE272C0A6E00C01ABF /* XYZAlertView.h */,
+				5B148BE7272C0A6E00C01ABF /* XYZAlertView.m */,
+				5B148BE6272C0A6E00C01ABF /* XYZSystemAlertView.h */,
+				5B148BE8272C0A6E00C01ABF /* XYZSystemAlertView.m */,
 			);
-			path = XYZAlert;
+			path = Classes;
 			sourceTree = "<group>";
 		};
-		5B02F3D72625A95A0023FC84 /* Tool */ = {
+		5B148BDF272C0A6E00C01ABF /* Dispatch */ = {
 			isa = PBXGroup;
 			children = (
-				5B02F3D82625A99A0023FC84 /* XYZHookTool.h */,
-				5B02F3D92625A99A0023FC84 /* XYZHookTool.m */,
-			);
-			path = Tool;
-			sourceTree = "<group>";
-		};
-		5B979F4A262EBBA800201B56 /* Dispatch */ = {
-			isa = PBXGroup;
-			children = (
-				5B979F42262EB54700201B56 /* XYZAlertProtocol.h */,
-				5B02F3C62625929B0023FC84 /* XYZAlertQueue.h */,
-				5B02F3C72625929B0023FC84 /* XYZAlertQueue.m */,
-				5B02F3CA26259CCD0023FC84 /* XYZAlertDispatch.h */,
-				5B02F3CB26259CCD0023FC84 /* XYZAlertDispatch.m */,
+				5B148BE0272C0A6E00C01ABF /* XYZAlertDispatch.h */,
+				5B148BE1272C0A6E00C01ABF /* XYZAlertQueue.m */,
+				5B148BE2272C0A6E00C01ABF /* XYZAlertQueue.h */,
+				5B148BE3272C0A6E00C01ABF /* XYZAlertDispatch.m */,
+				5B148BE4272C0A6E00C01ABF /* XYZAlertProtocol.h */,
 			);
 			path = Dispatch;
 			sourceTree = "<group>";
@@ -202,15 +189,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B02F3AA2625812C0023FC84 /* ViewController.m in Sources */,
+				5B148BF1272C0A6E00C01ABF /* XYZSystemAlertView.m in Sources */,
 				5B02F3A42625812B0023FC84 /* AppDelegate.m in Sources */,
-				5B979F1A262D840C00201B56 /* XYZAlertView.m in Sources */,
-				5B02F3CC26259CCD0023FC84 /* XYZAlertDispatch.m in Sources */,
-				5B979F48262EBB9700201B56 /* XYZSystemAlertView.m in Sources */,
+				5B148BEE272C0A6E00C01ABF /* XYZAlertDispatch.m in Sources */,
 				5B02F3B52625812E0023FC84 /* main.m in Sources */,
-				5B02F3D12625A0A80023FC84 /* UIViewController+XYZAlert.m in Sources */,
-				5B02F3DA2625A99A0023FC84 /* XYZHookTool.m in Sources */,
+				5B148BEF272C0A6E00C01ABF /* UIViewController+XYZAlert.m in Sources */,
 				5B02F3A72625812B0023FC84 /* SceneDelegate.m in Sources */,
-				5B02F3C82625929B0023FC84 /* XYZAlertQueue.m in Sources */,
+				5B148BED272C0A6E00C01ABF /* XYZAlertQueue.m in Sources */,
+				5B148BF0272C0A6E00C01ABF /* XYZAlertView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
