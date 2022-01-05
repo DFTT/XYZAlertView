@@ -13,8 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIViewController (XYZAlert)
 
-@property (nonatomic, strong, readonly) XYZAlertDispatch *alertDispah;
-
+- (void)dispathNewAlerts:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)alerts;
 
 @end
 

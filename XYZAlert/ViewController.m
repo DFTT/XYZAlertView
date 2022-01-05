@@ -84,7 +84,7 @@
     
 //    [alert1 addDependencyAlertID:@"3"];
     
-    [self.alertDispah addAlerts:@[alert1, alert2, alert3]];
+    [self dispathNewAlerts:@[alert1, alert2, alert3]];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [alert1 setCancelAndRemoveFromDispatch];
