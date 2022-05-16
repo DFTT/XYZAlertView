@@ -30,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addItem:(id<XYZAlertEnableDispatchProtocal>)item;
 - (void)addItems:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)items;
 
+/// 根据alertID找到AlertView (可能不存在, 或已经结束展示销毁, 也可能存在多个重名的, 所以要确保id不重复)
+- (NSArray<id<XYZAlertEnableDispatchProtocal>> *)findItemsWithID:(NSString *)alertID;
 @end
 
 NS_ASSUME_NONNULL_END

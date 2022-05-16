@@ -111,10 +111,10 @@
 			isa = PBXGroup;
 			children = (
 				5B148BE0272C0A6E00C01ABF /* XYZAlertDispatch.h */,
-				5B148BE1272C0A6E00C01ABF /* XYZAlertQueue.m */,
-				5B148BE2272C0A6E00C01ABF /* XYZAlertQueue.h */,
 				5B148BE3272C0A6E00C01ABF /* XYZAlertDispatch.m */,
 				5B148BE4272C0A6E00C01ABF /* XYZAlertProtocol.h */,
+				5B148BE2272C0A6E00C01ABF /* XYZAlertQueue.h */,
+				5B148BE1272C0A6E00C01ABF /* XYZAlertQueue.m */,
 			);
 			path = Dispatch;
 			sourceTree = "<group>";

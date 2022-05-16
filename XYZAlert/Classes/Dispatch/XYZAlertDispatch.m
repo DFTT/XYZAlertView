@@ -31,6 +31,21 @@
     return tmp;
 }
 
+- (NSArray<id<XYZAlertEnableDispatchProtocal>> *)findAlertWithID:(NSString *)alertID {
+    if (!alertID || alertID.length == 0) {
+        return @[];
+    }
+    NSMutableArray *marr = [NSMutableArray arrayWithCapacity:2];
+    [_showingAlerts enumerateObjectsUsingBlock:^(id<XYZAlertEnableDispatchProtocal>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj.alertID isEqualToString:alertID]) {
+            [marr addObject:obj];
+        }
+    }];
+    [marr addObjectsFromArray:[_queue findItemsWithID:alertID]];
+    
+    return marr;
+}
+
 - (void)addAlerts:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)alerts {
     for (id<XYZAlertEnableDispatchProtocal> tmp in alerts) {
         tmp.weakDispatch = self;

@@ -27,6 +27,20 @@
 - (BOOL)isEmpty {
     return [self count] == 0;
 }
+
+- (NSArray<id<XYZAlertEnableDispatchProtocal>> *)findItemsWithID:(NSString *)alertID {
+    if (!alertID || alertID.length == 0) {
+        return @[];
+    }
+    NSMutableArray *marr = [NSMutableArray arrayWithCapacity:2];
+    [_items enumerateObjectsUsingBlock:^(id<XYZAlertEnableDispatchProtocal>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj.alertID isEqualToString:alertID]) {
+            [marr addObject:obj];
+        }
+    }];
+    return marr;
+}
+
 - (void)addItem:(id<XYZAlertEnableDispatchProtocal>)item {
     if (!item || NO == [item conformsToProtocol:@protocol(XYZAlertEnableDispatchProtocal)]) {
         return;
