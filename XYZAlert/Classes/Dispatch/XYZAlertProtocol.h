@@ -16,11 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol XYZAlertLifeProtocal <NSObject>
 
 /// 准备结束的主动回调
-/// @param alert alert
-/// @param ready YES: 调度管理将立即开始尝试展示, NO: 放弃展示并从队列中移除
-- (void)alert:(id<XYZAlertEnableDispatchProtocal>)alert readyed:(BOOL)ready;
+/// @param alert alert 调度管理将立即开始尝试展示
+- (void)alertDidReady:(id<XYZAlertEnableDispatchProtocal>)alert;
 
-// 展示完毕已经移除的主动回调
+// 展示完毕已经移除/取消展示 的主动回调
 - (void)alertDidRemoveFromSuperView:(id<XYZAlertEnableDispatchProtocal>)alert;
 
 @end

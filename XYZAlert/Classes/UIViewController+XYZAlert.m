@@ -43,10 +43,7 @@
     });
 }
 
-#pragma mark - public
-- (void)dispathNewAlerts:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)alerts {
-    [self.alertDispah addAlerts:alerts];
-}
+
 #pragma mark - Visiable
 - (BOOL)canShowAlert {
     if (self.isAppear == NO) {

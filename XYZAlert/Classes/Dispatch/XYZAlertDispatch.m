@@ -25,11 +25,6 @@
     }
     return self;
 }
-+ (instancetype)distachWithVerifyBlock:(UIView * _Nonnull (^)(void))block {
-    XYZAlertDispatch *tmp = [[XYZAlertDispatch alloc] init];
-    tmp->_verifyBlock = [block copy];
-    return tmp;
-}
 
 - (NSArray<id<XYZAlertEnableDispatchProtocal>> *)findAlertWithID:(NSString *)alertID {
     if (!alertID || alertID.length == 0) {
@@ -53,17 +48,7 @@
     [_queue addItems:alerts];
     [self p__tryDispatch];
 }
-- (void)bindedVCDidAppear {
-    
-    [self p__restoreShowingAlert];
-  
-    [self p__tryDispatch];
-}
-- (void)bindedVCDidDisappear {
-    for (id<XYZAlertEnableDispatchProtocal> tmp in _showingAlerts) {
-        [tmp dispatchAlertTmpHidden:YES];
-    }
-}
+
 
 - (void)p__restoreShowingAlert {
     if (_showingAlerts.count == 0) {
@@ -102,46 +87,26 @@
     }
     id<XYZAlertEnableDispatchProtocal> alert = nil;
     if (_showingAlerts.count > 0) {
-
+        
         [self p__restoreShowingAlert];
-        
-        alert = [_queue next];
+        __weak typeof(self) weakSelf = self;
+        alert = [_queue next:^BOOL(id<XYZAlertEnableDispatchProtocal> _Nonnull obj) {
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (strongSelf == nil) {
+                return NO;
+            }
+            return [strongSelf p___isCanShowCheck:obj];
+        }];
         if (alert == nil) { return; }
-        
-        for (id<XYZAlertEnableDispatchProtocal> showingObj in _showingAlerts) {
-            if ([alert.dependencyAlertIDSet containsObject:showingObj.alertID]) {
-                // 有依赖展示中未结束 放弃
-                return;
-            }
-            if (alert.priority <= showingObj.priority) {
-                // 优先级不高于 当前展示中的 放弃
-                return;
-            }
-        }
-        
-        // 判断排它
-        switch (alert.exclusiveBehavior) {
-            case XYZAlertExclusiveBehaviorNone:
-                // 不能排它 放弃展示
-                return;
-            case XYZAlertExclusiveBehaviorHiddenOther:
-            {
-                // 需要隐藏其他的
-                for (id<XYZAlertEnableDispatchProtocal> tmp in _showingAlerts) {
-                    [tmp dispatchAlertTmpHidden:YES];
-                }
-            }
-                break;
-            
-            case XYZAlertExclusiveBehaviorCoverOther:
-                //  nothing 直接展示即可覆盖
-                break;
-            default:
-                break;
-        }
-    
+
         [_queue removeItem:alert];
-        
+     
+        // 即将显示 是否需要隐藏其它显示中的
+        if (alert.exclusiveBehavior == XYZAlertExclusiveBehaviorHiddenOther) {
+            for (id<XYZAlertEnableDispatchProtocal> tmp in _showingAlerts) {
+                [tmp dispatchAlertTmpHidden:YES];
+            }
+        }
     }else {
         
         alert = [_queue popItem];
@@ -154,21 +119,74 @@
     }
 }
 
-#pragma mark - XYZAlertLifeProtocal
-- (void)alert:(id<XYZAlertEnableDispatchProtocal>)alert readyed:(BOOL)ready {
-    if (ready) {
-        [self p__tryDispatch];
-    }else {
-        [_showingAlerts removeObject:alert];
-        [_queue removeItem:alert];
-        [self p__tryDispatch];
+- (BOOL)p___isCanShowCheck:(id<XYZAlertEnableDispatchProtocal>)alert {
+    for (id<XYZAlertEnableDispatchProtocal> showingObj in _showingAlerts) {
+        if ([alert.dependencyAlertIDSet containsObject:showingObj.alertID]) {
+            // 依赖展示中的 放弃
+            return NO;
+        }
+        if (alert.priority <= showingObj.priority) {
+            // 优先级不高于当前展示中的 放弃
+            return NO;
+        }
     }
+    
+    // 判断排它
+    switch (alert.exclusiveBehavior) {
+        case XYZAlertExclusiveBehaviorNone:
+            // 不能排它 放弃展示
+            return NO;
+        case XYZAlertExclusiveBehaviorHiddenOther:
+        {
+            // 需要隐藏其他的  显示时再隐藏其他的
+        }
+            break;
+            
+        case XYZAlertExclusiveBehaviorCoverOther:
+            //  nothing 直接展示即可覆盖
+            break;
+        default:
+            break;
+    }
+    return YES;
+}
+#pragma mark - XYZAlertLifeProtocal
+- (void)alertDidReady:(id<XYZAlertEnableDispatchProtocal>)alert {
+    [self p__tryDispatch];
 }
 - (void)alertDidRemoveFromSuperView:(id<XYZAlertEnableDispatchProtocal>)alert {
     [_showingAlerts removeObject:alert];
     [_queue removeItem:alert]; // 这行其实是为了容错 可以不加
-
+    
     [self p__tryDispatch];
 }
 
 @end
+
+
+
+
+
+
+@implementation XYZAlertDispatch (PrivateInternal)
+
++ (instancetype)distachWithVerifyBlock:(UIView * _Nonnull (^)(void))block {
+    XYZAlertDispatch *tmp = [[XYZAlertDispatch alloc] init];
+    tmp->_verifyBlock = [block copy];
+    return tmp;
+}
+
+- (void)bindedVCDidAppear {
+    
+    [self p__restoreShowingAlert];
+    
+    [self p__tryDispatch];
+}
+
+- (void)bindedVCDidDisappear {
+    for (id<XYZAlertEnableDispatchProtocal> tmp in _showingAlerts) {
+        [tmp dispatchAlertTmpHidden:YES];
+    }
+}
+@end
+

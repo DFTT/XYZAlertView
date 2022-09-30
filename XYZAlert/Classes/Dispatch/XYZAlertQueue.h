@@ -17,8 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (int)count;
 
-// 下个展示的
-- (nullable id<XYZAlertEnableDispatchProtocal>)next;
+/// 下个展示的
+/// @param check 和显示中的那部分比较
+- (nullable id<XYZAlertEnableDispatchProtocal>)next:(BOOL(^)(id<XYZAlertEnableDispatchProtocal>))canShowCheck;
 
 // 根据优先级 取出
 - (nullable id<XYZAlertEnableDispatchProtocal>)popItem;

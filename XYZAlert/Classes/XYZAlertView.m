@@ -25,13 +25,14 @@
 - (void)setReadyAndTryDispath {
     if (curState == XYZAlertStatePrepare) {
         curState = XYZAlertStateReady;
-        [weakDispatch alert:self readyed:YES];
+        [weakDispatch alertDidReady:self];
     }
 }
 - (void)setCancelAndRemoveFromDispatch {
-    if (curState == XYZAlertStatePrepare) {
+    if (curState != XYZAlertStateEnd) {
+        [self removeFromSuperview];
         curState = XYZAlertStateEnd;
-        [weakDispatch alert:self readyed:NO];
+        [weakDispatch alertDidRemoveFromSuperView:self];
     }
 }
 - (void)addDependencyAlertID:(NSString *)alertid {

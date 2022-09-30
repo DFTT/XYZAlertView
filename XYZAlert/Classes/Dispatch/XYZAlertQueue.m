@@ -89,7 +89,7 @@
     [_items removeObject:item];
     dispatch_semaphore_signal(_lock);
 }
-- (id<XYZAlertEnableDispatchProtocal>)next {
+- (id<XYZAlertEnableDispatchProtocal>)next:(BOOL (^)(id<XYZAlertEnableDispatchProtocal> _Nonnull))canShowCheck {
     if ([self isEmpty]) {
         return nil;
     }
@@ -112,6 +112,9 @@
                 // 有依赖未展示 跳过
                 return;
             }
+        }
+        if (NO == canShowCheck(obj)) {
+            return;
         }
         // 准备好了 & 有依赖但都已完成 直接使用
         target = obj;
