@@ -9,11 +9,20 @@
 #import "XYZAlertProtocol.h"
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, XYZAlertViewShowAnimatonType) {
+    XYZAlertViewShowAnimatonSystem,  // 仿系统
+    XYZAlertViewShowAnimatonBounces, // 中间方法带抖动
+    XYZAlertViewShowAnimatonDown,    // 从上落下
+};
 
-@interface XYZAlertView : UIView <XYZAlertEnableDispatchProtocal>
+
+@interface XYZAlertView : UIView <XYZAlertDispatchAble>
 
 /// 容器Alert
 @property (nonatomic, strong) UIView *containerAlertView;
+
+/// Alert出现/消失的动画类型
+@property (nonatomic, assign) XYZAlertViewShowAnimatonType animationType UI_APPEARANCE_SELECTOR;
 
 /// 容器Alert最大size
 /// defult screenWitdh == 320 ? CGSizeMake(280, 400) : CGSizeMake(310, 500);

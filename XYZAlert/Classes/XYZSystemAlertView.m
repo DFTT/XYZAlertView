@@ -40,7 +40,7 @@
         [_topLine removeFromSuperlayer];
         _topLine = [self crearLayer];
         [self.layer addSublayer:_topLine];
-
+        
     }
     if (edges & UIRectEdgeRight) {
         [_righrLine removeFromSuperlayer];
@@ -144,7 +144,7 @@
         hstack.spacing = 0;
         hstack.distribution = UIStackViewDistributionFillEqually;
         [_actions enumerateObjectsUsingBlock:^(XYZSystemAlertViewActionBtn * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-
+            
             [hstack addArrangedSubview:obj];
             if (idx == 0) {
                 [obj addLineWith:UIRectEdgeTop];

@@ -9,7 +9,7 @@
 
 @implementation XYZAlertQueue
 {
-    NSMutableArray<id<XYZAlertEnableDispatchProtocal>> *_items;
+    NSMutableArray<id<XYZAlertDispatchAble>> *_items;
     dispatch_semaphore_t _lock;
 }
 - (instancetype)init {
@@ -28,12 +28,12 @@
     return [self count] == 0;
 }
 
-- (NSArray<id<XYZAlertEnableDispatchProtocal>> *)findItemsWithID:(NSString *)alertID {
+- (NSArray<id<XYZAlertDispatchAble>> *)findItemsWithID:(NSString *)alertID {
     if (!alertID || alertID.length == 0) {
         return @[];
     }
     NSMutableArray *marr = [NSMutableArray arrayWithCapacity:2];
-    [_items enumerateObjectsUsingBlock:^(id<XYZAlertEnableDispatchProtocal>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [_items enumerateObjectsUsingBlock:^(id<XYZAlertDispatchAble>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([obj.alertID isEqualToString:alertID]) {
             [marr addObject:obj];
         }
@@ -41,8 +41,8 @@
     return marr;
 }
 
-- (void)addItem:(id<XYZAlertEnableDispatchProtocal>)item {
-    if (!item || NO == [item conformsToProtocol:@protocol(XYZAlertEnableDispatchProtocal)]) {
+- (void)addItem:(id<XYZAlertDispatchAble>)item {
+    if (!item || NO == [item conformsToProtocol:@protocol(XYZAlertDispatchAble)]) {
         return;
     }
     
@@ -50,7 +50,7 @@
     // 添加
     [_items addObject:item];
     // 按照优先级"降序"排列
-    [_items sortUsingComparator:^NSComparisonResult(id<XYZAlertEnableDispatchProtocal>  _Nonnull obj1, id<XYZAlertEnableDispatchProtocal>  _Nonnull obj2) {
+    [_items sortUsingComparator:^NSComparisonResult(id<XYZAlertDispatchAble>  _Nonnull obj1, id<XYZAlertDispatchAble>  _Nonnull obj2) {
         
         if (obj1.priority < obj2.priority) {
             return NSOrderedDescending;
@@ -61,7 +61,7 @@
     }];
     dispatch_semaphore_signal(_lock);
 }
-- (void)addItems:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)items {
+- (void)addItems:(NSArray<id<XYZAlertDispatchAble>> *)items {
     if (!items || 0 == items.count) {
         return;
     }
@@ -70,7 +70,7 @@
     // 添加
     [_items addObjectsFromArray:items];
     // 按照优先级"降序"排列
-    [_items sortUsingComparator:^NSComparisonResult(id<XYZAlertEnableDispatchProtocal>  _Nonnull obj1, id<XYZAlertEnableDispatchProtocal>  _Nonnull obj2) {
+    [_items sortUsingComparator:^NSComparisonResult(id<XYZAlertDispatchAble>  _Nonnull obj1, id<XYZAlertDispatchAble>  _Nonnull obj2) {
         
         if (obj1.priority < obj2.priority) {
             return NSOrderedDescending;
@@ -81,7 +81,7 @@
     }];
     dispatch_semaphore_signal(_lock);
 }
-- (void)removeItem:(id<XYZAlertEnableDispatchProtocal>)item {
+- (void)removeItem:(id<XYZAlertDispatchAble>)item {
     if (nil == item || [self isEmpty]) {
         return ;
     }
@@ -89,13 +89,13 @@
     [_items removeObject:item];
     dispatch_semaphore_signal(_lock);
 }
-- (id<XYZAlertEnableDispatchProtocal>)next:(BOOL (^)(id<XYZAlertEnableDispatchProtocal> _Nonnull))canShowCheck {
+- (id<XYZAlertDispatchAble>)next:(BOOL (^)(id<XYZAlertDispatchAble> _Nonnull))canShowCheck {
     if ([self isEmpty]) {
         return nil;
     }
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    __block id<XYZAlertEnableDispatchProtocal> target = nil;
-    [_items enumerateObjectsUsingBlock:^(id<XYZAlertEnableDispatchProtocal> _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    __block id<XYZAlertDispatchAble> target = nil;
+    [_items enumerateObjectsUsingBlock:^(id<XYZAlertDispatchAble> _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         if (XYZAlertStateReady != obj.curState) {
             // 未准备好 跳过
@@ -107,7 +107,7 @@
             *stop  = YES;
             return;
         }
-        for (id<XYZAlertEnableDispatchProtocal> alert in _items) {
+        for (id<XYZAlertDispatchAble> alert in _items) {
             if ([obj.dependencyAlertIDSet containsObject:alert.alertID]) {
                 // 有依赖未展示 跳过
                 return;
@@ -123,14 +123,14 @@
     dispatch_semaphore_signal(_lock);
     return target;
 }
-- (id<XYZAlertEnableDispatchProtocal>)popItem {
+- (id<XYZAlertDispatchAble>)popItem {
     if ([self isEmpty]) {
         return nil;
     }
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     __block NSInteger targetIdx = -1;
-    __block id<XYZAlertEnableDispatchProtocal> target = nil;
-    [_items enumerateObjectsUsingBlock:^(id<XYZAlertEnableDispatchProtocal> _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    __block id<XYZAlertDispatchAble> target = nil;
+    [_items enumerateObjectsUsingBlock:^(id<XYZAlertDispatchAble> _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         if (XYZAlertStateReady != obj.curState) {
             // 未准备好 跳过
@@ -143,7 +143,7 @@
             *stop  = YES;
             return;
         }
-        for (id<XYZAlertEnableDispatchProtocal> alert in _items) {
+        for (id<XYZAlertDispatchAble> alert in _items) {
             if ([obj.dependencyAlertIDSet containsObject:alert.alertID]) {
                 // 有依赖未展示 跳过
                 return;

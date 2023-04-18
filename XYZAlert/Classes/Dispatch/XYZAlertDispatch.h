@@ -12,16 +12,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XYZAlertDispatch : NSObject <XYZAlertLifeProtocal>
 
 // 使用此方法 添加Alert 并尝试展示
-- (void)addAlerts:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)alerts;
+- (void)addAlerts:(NSArray<id<XYZAlertDispatchAble>> *)alerts;
 
-/// 根据alertID找到AlertView (可能不存在, 或已经结束展示销毁, 也可能存在多个重名的, 所以要确保id不重复)
-- (NSArray<id<XYZAlertEnableDispatchProtocal>> *)findAlertWithID:(NSString *)alertID;
+// 根据alertID找到AlertView (可能不存在, 或已经结束展示销毁, 也可能存在多个重名的, 所以要确保id不重复)
+- (NSArray<id<XYZAlertDispatchAble>> *)findAlertWithID:(NSString *)alertID;
 
 @end
 
 
 
-/// 内部私有方法
+/// 内部私有方法 勿直接调用
 @interface XYZAlertDispatch (PrivateInternal)
 
 /// 创建一个调度器 绑定

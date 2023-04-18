@@ -36,7 +36,7 @@
         SEL swizzledSelector_1 = @selector(xyzAlert_viewDidAppear:);
         __swizzleSel([self class], originalSelector_1, swizzledSelector_1);
         
-
+        
         SEL originalSelector_2 = @selector(viewDidDisappear:);
         SEL swizzledSelector_2 = @selector(xyzAlert_viewDidDisappear:);
         __swizzleSel([self class], originalSelector_2, swizzledSelector_2);

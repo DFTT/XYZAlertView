@@ -157,7 +157,7 @@
         [_alert addActionBtn:act1];
     }
     
-    
+    _alert.animationType = arc4random() % 3;
     [_alert showOnView:self.view];
 }
 

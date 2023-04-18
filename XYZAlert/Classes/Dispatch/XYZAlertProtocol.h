@@ -10,18 +10,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol XYZAlertEnableDispatchProtocal;
+@protocol XYZAlertDispatchAble;
 
 
 @protocol XYZAlertLifeProtocal <NSObject>
 
-/// 准备结束的主动回调
+// 通知调度器 -> 准备结束的主动回调,
 /// @param alert alert 调度管理将立即开始尝试展示
-- (void)alertDidReady:(id<XYZAlertEnableDispatchProtocal>)alert;
+- (void)alertDidReady:(id<XYZAlertDispatchAble>)alert;
 
-// 展示完毕已经移除/取消展示 的主动回调
-- (void)alertDidRemoveFromSuperView:(id<XYZAlertEnableDispatchProtocal>)alert;
-
+// 通知调度器 -> 展示完毕已经移除/取消展示 的主动回调
+- (void)alertDidRemoveFromSuperView:(id<XYZAlertDispatchAble>)alert;
 @end
 
 
@@ -43,38 +42,37 @@ typedef NS_ENUM(NSInteger, XYZAlertState) {
     XYZAlertStateEnd,       // 结束销毁
 };
 
-@protocol XYZAlertEnableDispatchProtocal <NSObject>
+
+
+@protocol XYZAlertDispatchAble <NSObject>
 
 // 唯一标示
 @property (nonatomic, copy, nullable) NSString *alertID;
 
 // 状态
 @property (nonatomic, assign, readonly) XYZAlertState curState;
-// 标记已准备好, 立即尝试进行展示
+// 标记已准备好, 通知调度器, 立即尝试进行展示
 - (void)setReadyAndTryDispath;
-// 准备结束, 需要放弃本次展示并从队列中移除
+// 标记需要结束, 通知调度器, 放弃展示并从队列中移除
 - (void)setCancelAndRemoveFromDispatch;
 
 // 优先级
-/// 1. 调度时高优先级的优先处理
-/// 2. 展示时优先级高的才能互斥掉其它Alert
+/// 1. 调度展现时, 高优先级的会优先处理展示
+/// 2. 展示时互斥, 高优先级的会互斥掉其它低优先级的Alert
 @property (nonatomic, assign) int priority;
 
 // 发生互斥时的行为
-/// 展示时如果已经存在展示中的alert 则按照此行为进行排它操作
+/// 自身展示时, 如果已经存在其它比自己优先级低且展示中的alert, 会按照此行为进行排它操作
 @property (nonatomic, assign) XYZAlertExclusiveBehaviorType exclusiveBehavior;
 
 // 依赖其他弹窗的id组
-/// 如果依赖的弹窗未能结束展示 自己将不会被展示
+/// 如果依赖的弹窗未能结束展示, 则自己将不会被展示
 @property (nonatomic, readonly) NSSet<NSString *> *dependencyAlertIDSet;
 // 添加展示前对其他弹窗的依赖 (依赖的alert展示结束后 自己才允许展示)
 - (void)addDependencyAlertID:(NSString *)alertid;
 
 
-
-
-
-// 调度器
+// 弱引用持有调度器
 @property (nonatomic, weak  ) id<XYZAlertLifeProtocal> weakDispatch;
 
 // 被调度->展现

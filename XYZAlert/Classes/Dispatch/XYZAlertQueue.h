@@ -18,21 +18,21 @@ NS_ASSUME_NONNULL_BEGIN
 - (int)count;
 
 /// 下个展示的
-/// @param check 和显示中的那部分比较
-- (nullable id<XYZAlertEnableDispatchProtocal>)next:(BOOL(^)(id<XYZAlertEnableDispatchProtocal>))canShowCheck;
+/// - Parameter canShowCheck: 和显示中的那部分比较
+- (nullable id<XYZAlertDispatchAble>)next:(BOOL(^)(id<XYZAlertDispatchAble>))canShowCheck;
 
 // 根据优先级 取出
-- (nullable id<XYZAlertEnableDispatchProtocal>)popItem;
+- (nullable id<XYZAlertDispatchAble>)popItem;
 
 // 移除
-- (void)removeItem:(id<XYZAlertEnableDispatchProtocal>)item;
+- (void)removeItem:(id<XYZAlertDispatchAble>)item;
 
 // 根据优先级 进入队列
-- (void)addItem:(id<XYZAlertEnableDispatchProtocal>)item;
-- (void)addItems:(NSArray<id<XYZAlertEnableDispatchProtocal>> *)items;
+- (void)addItem:(id<XYZAlertDispatchAble>)item;
+- (void)addItems:(NSArray<id<XYZAlertDispatchAble>> *)items;
 
 /// 根据alertID找到AlertView (可能不存在, 或已经结束展示销毁, 也可能存在多个重名的, 所以要确保id不重复)
-- (NSArray<id<XYZAlertEnableDispatchProtocal>> *)findItemsWithID:(NSString *)alertID;
+- (NSArray<id<XYZAlertDispatchAble>> *)findItemsWithID:(NSString *)alertID;
 @end
 
 NS_ASSUME_NONNULL_END
