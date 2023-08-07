@@ -1,5 +1,6 @@
 # XYZAlertView
 
+SheetView见 https://github.com/DFTT/XYZSheetView
 
 ### 是什么
 - 实现了一个调度逻辑，用来对单页面(VC)中多个弹窗的管理```XYZAlertDispatch``` , 可以通过```vc.alertDispah```方便的访问.
@@ -20,8 +21,8 @@
 #### 使用:
     - 源码安装: 拖拽XYZAlert文件夹到项目中即可
     - cocoapods: 
-    ```
+```
         source "https://github.com/DFTT/XYZPodspecs.git"
         pod 'XYZAlert'
-    ``` 
+``` 
     
