@@ -102,6 +102,9 @@
             return;
         }
         if (obj.dependencyAlertIDSet.count <= 0) {
+            if (NO == canShowCheck(obj)) {
+                return;
+            }
             // 准备好了 & 无依赖 直接使用
             target = obj;
             *stop  = YES;
