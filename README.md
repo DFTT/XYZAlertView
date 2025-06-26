@@ -19,10 +19,12 @@ SheetView见 https://github.com/DFTT/XYZSheetView
 7. 支持自动躲避键盘, 自动向上偏移/恢复 (可修正偏移距离)
 
 #### 使用:
-    - 源码安装: 拖拽XYZAlert文件夹到项目中即可
-    - cocoapods: 
+- 源码安装: 
+    拖拽XYZAlert文件夹到项目中即可
+- cocoapods: 
 ```
-        source "https://github.com/DFTT/XYZPodspecs.git"
-        pod 'XYZAlert'
+    source "https://github.com/DFTT/XYZPodspecs.git"
+    
+    pod 'XYZAlert'
 ``` 
     

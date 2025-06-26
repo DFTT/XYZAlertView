@@ -100,11 +100,11 @@
     
     CGRect kbToRect = [notify.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGFloat animationDuration = [notify.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    
-    CGFloat offsetY = CGRectGetHeight(kbToRect);
-    
+        
     CGAffineTransform transf = CGAffineTransformIdentity;
     if (willShow) {
+        CGRect alertRect = [self.containerAlertView convertRect:self.containerAlertView.bounds toView:self.window];
+        CGFloat offsetY = CGRectGetMaxY(alertRect) - CGRectGetMinY(kbToRect);
         if (offsetY <= 0) {
             return;
         }
