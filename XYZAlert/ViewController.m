@@ -51,7 +51,6 @@
 }
 - (void)_____dependAlert {
     XYZSystemAlertViewActionBtn *act1 = [XYZSystemAlertViewActionBtn actionWithName:@"点击跳转测试页面" clickCallback:^{
-        
         [self.navigationController pushViewController:[ViewController new] animated:YES];
     }];
     XYZSystemAlertView *alert1 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题1" msg:@"我的是描述描述描述描述描述描述"];

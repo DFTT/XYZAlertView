@@ -1,30 +1,54 @@
 # XYZAlertView
 
+轻量、可扩展的 Alert 弹窗组件，支持与 ViewController 绑定、优先级/依赖/互斥/延迟展示、页面消失自动隐藏恢复等弹窗调度逻辑。
+
 SheetView见 https://github.com/DFTT/XYZSheetView
 
-### 是什么
-- 实现了一个调度逻辑，用来对单页面(VC)中多个弹窗的管理```XYZAlertDispatch``` , 可以通过```vc.alertDispah```方便的访问.
-- 实现了一个UI基类```XYZAlertView```, 内部实现了调度协议```XYZAlertEnableDispatchProtocal```用来支持各种调度
-- 由于各项目UI差异, 可以继承实现自己的AlertView基类, AlertView可以单独脱离调度类使用(在无多弹窗场景, 可以直接用来展示/移除) 
-- 继承```XYZAlertView```实现了一个类似系统的通用Alert```XYZSystemAlertView```
+## 一、特性
 
+* 支持将弹窗绑定到特定 UIViewController 实例，管理同一页面内的多个弹窗。
+* 支持弹窗优先级调度：高优先级弹窗可覆盖或隐藏低优先级弹窗（即使高优先级弹窗是后添加进队列的）。
+* 支持弹窗之间的依赖关系：可指定某弹窗在其依赖的全部弹窗展示完毕(关闭)后再显示。
+* 支持延迟或异步展示：弹窗可先加入队列，异步任务完成后调用 `setReadyAndTryDispath` 进行展示。
+* 支持 UIViewController 消失后自动隐藏当前绑定弹窗，并在页面再次出现时自动恢复未结束的弹窗。
+* 支持弹窗在任意 UIView 上显示（当前 VC.view／ window／自定义 view ），通过 `showOnView` 属性可提前设置承载层。
+* 支持键盘弹出情况下自动偏移弹窗以避免遮挡，同时可自定义偏移距离。
+* 核心类为 `XYZAlertView` 基类，可直接使用或继承定制。亦开箱提供类似系统样式的通用弹窗 `XYZSystemAlertView`。
 
-#### 已支持：
-1. 调度队列颗粒度ViewController
-2. 支持按照```优先级```顺序展示 (如果是后添加的高优先级弹窗, 可以根据配置 覆盖/隐藏 已显示的低优先级弹窗)
-3. 支持各弹窗之间添加```依赖```, 依赖弹窗全部展示结束后, 再展示自己
-4. 支持先添加进队列, 完成异步操作后再展示（比如请求数据后）, 只需要在合适的时机调用```XYZAlertView: -setReadyAndTryDispath```即可, 状态可参见```XYZAlertView: curStete```
-5. 支持ViewController消失后, 自动隐藏当前VC绑定的弹窗 (目前直接hidden相应的Alert), ViewController再次出现时, 自动恢复未结束的Alert
-6. 支持弹窗覆盖全屏, 即可以展示在非绑定的vc.view上, 可以自动控制弹窗仅覆盖当前VC.View/全屏/任意其他view（提前设置```XYZAlertView: showOnView```为一个可以可以覆盖全屏的View即可, 比如NavVC.view / TabVC.view / KeyWindow ...）
-7. 支持自动躲避键盘, 自动向上偏移/恢复 (可修正偏移距离)
+## 二、安装
 
-#### 使用:
-- 源码安装: 
-    拖拽XYZAlert文件夹到项目中即可
-- cocoapods: 
-```
-    source "https://github.com/DFTT/XYZPodspecs.git"
-    
-    pod 'XYZAlert'
-``` 
-    
+iOS 9.0 及以上。使用 Objective-C 编写，可在 Swift 项目中混编使用。
+
+* 源码方式：将 `XYZAlert` 文件夹拖拽至项目中即可。
+
+* CocoaPods：
+
+  ```ruby
+  source "https://github.com/DFTT/XYZPodspecs.git"
+  pod 'XYZAlert'
+  ```
+
+## 三、核心类 & API 介绍
+
+### `XYZAlertView`
+
+弹窗基类，实现了调度协议 `XYZAlertEnableDispatchProtocol`，可单独使用或配合调度系统使用，可继承并实现自定义 UI、动画等。
+
+* `priority`：弹窗优先级，值越大优先级越高，高优先级弹窗可中断低优先级弹窗展示。
+* `dependencyAlerts`：设置本弹窗依赖的其他弹窗（可多个），当所有依赖弹窗结束后本弹窗才可展示（**注意：避免循环依赖**）。
+* `showOnView`：默认弹窗显示在 VC.view 上；可设置为其它 UIView（如 window / 导航 VC.view / TabVC.view ）以实现覆盖全屏。
+* `curState`：当前弹窗状态（如 ready／waiting／showing／finished）以便调度管理。
+* `setReadyAndTryDispatch`：当异步任务完成、准备好展示弹窗时调用，应触发调度机制检查能否展示。
+* 键盘适配相关属性（如 keyboardAvoidOffset 等）可调整弹窗在键盘弹起时的偏移。
+
+### `XYZSystemAlertView`
+
+系统样式弹窗，继承自 `XYZAlertView`，提供类似系统 Alert 的界面。
+
+### `XYZAlertDispatch`
+
+弹窗调度器，管理VC中的多个弹窗展示逻辑。
+
+* 绑定于每个 UIViewController （通常通过 `vc.alertDispatch` 访问）用于管理该页面所有加入队列的弹窗。
+* 方法如 `addAlert:`、`removeAlert:`、`flushQueue` 用于弹窗队列的添加、移除、触发调度执行。
+* 自动监听 UIViewController 的 viewWillDisappear/viewDidAppear 生命周期，以实现页面消失时隐藏弹窗、页面重新出现时恢复弹窗的能力。

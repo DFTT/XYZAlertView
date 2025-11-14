@@ -52,6 +52,10 @@
     if (self.view.window == nil) {
         return NO;
     }
+    // 转场中
+    if (self.transitionCoordinator != nil || self.isBeingDismissed || self.isBeingPresented || self.isMovingToParentViewController || self.isMovingFromParentViewController) {
+        return NO;
+    }
     BOOL transitioning = NO;
     @try {
         transitioning = [[self.navigationController valueForKey:@"_isTransitioning"] boolValue];
