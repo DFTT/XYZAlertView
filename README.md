@@ -13,6 +13,7 @@ SheetView见 https://github.com/DFTT/XYZSheetView
 * 支持 UIViewController 消失后自动隐藏当前绑定弹窗，并在页面再次出现时自动恢复未结束的弹窗。
 * 支持弹窗在任意 UIView 上显示（当前 VC.view／ window／自定义 view ），通过 `showOnView` 属性可提前设置承载层。
 * 支持键盘弹出情况下自动偏移弹窗以避免遮挡，同时可自定义偏移距离。
+* 支持手动开启父子调度域，在少量需要跨 VC 协调的场景中统一处理优先级、依赖和互斥。
 * 核心类为 `XYZAlertView` 基类，可直接使用或继承定制。亦开箱提供类似系统样式的通用弹窗 `XYZSystemAlertView`。
 
 ## 二、安装
@@ -50,5 +51,43 @@ iOS 9.0 及以上。使用 Objective-C 编写，可在 Swift 项目中混编使�
 弹窗调度器，管理VC中的多个弹窗展示逻辑。
 
 * 绑定于每个 UIViewController （通常通过 `vc.alertDispatch` 访问）用于管理该页面所有加入队列的弹窗。
-* 方法如 `addAlert:`、`removeAlert:`、`flushQueue` 用于弹窗队列的添加、移除、触发调度执行。
+* 方法如 `addAlerts:`、`findAlertWithID:` 用于弹窗队列的添加和查询。
 * 自动监听 UIViewController 的 viewWillDisappear/viewDidAppear 生命周期，以实现页面消失时隐藏弹窗、页面重新出现时恢复弹窗的能力。
+* `someAlertDidShow` / `someAlertDidDismiss` 可监听当前 dispatch 中弹窗的展示和结束。
+
+默认情况下，每个 VC 的 dispatch 独立调度，互不影响。跨 VC 的统一调度是显式开启能力，库不会默认创建或绑定父子 dispatch，避免普通页面产生额外调度成本。
+
+### 父子调度域
+
+当页面结构类似 `navVC -> tabVC(vc1, vc2, vc3...)` 时，可能会有一个弹窗属于 `tabVC`，另一个弹窗属于当前选中的 `vc1`。如果它们需要统一处理优先级、依赖或互斥，可以手动将相关 dispatch 组成同一个调度域。
+
+父级 dispatch 提供当前激活的子 dispatch：
+
+```objc
+tabVC.alertDispatch.activeChildDispatchProvider = ^XYZAlertDispatch *{
+    return tabVC.selectedViewController.alertDispatch;
+};
+```
+
+子级 dispatch 手动绑定父级 dispatch：
+
+```objc
+vc1.alertDispatch.parent = tabVC.alertDispatch;
+vc2.alertDispatch.parent = tabVC.alertDispatch;
+vc3.alertDispatch.parent = tabVC.alertDispatch;
+```
+
+弹窗仍然添加到自己的页面 dispatch：
+
+```objc
+[tabVC.alertDispatch addAlerts:@[globalAlert]];
+[vc1.alertDispatch addAlerts:@[pageAlert]];
+```
+
+当父子关系建立后，任一 dispatch 中的 ready、dismiss、didAppear 都会向 root dispatch 合并触发一次调度。root 会收集当前 active 链路上的 queue/showing alerts 后统一仲裁。例如当前链路为 `tabVC.dispatch -> vc1.dispatch` 时，`tabVC` 级弹窗和 `vc1` 级弹窗会参与同一套优先级、依赖和互斥判断。
+
+注意：
+
+* `parent` 和 `activeChildDispatchProvider` 都需要在子 VC 触发展示调度前设置。
+* 库不会自动为 `UINavigationController` / `UITabBarController` 设置调度域；需要跨 dispatch 协调时请手动设置。
+* `showOnView` 只决定弹窗显示在哪个 view 上，不决定它和哪些弹窗一起调度。跨 VC 互斥/依赖请使用父子调度域。

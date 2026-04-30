@@ -33,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 根据alertID找到AlertView (可能不存在, 或已经结束展示销毁, 也可能存在多个重名的, 所以要确保id不重复)
 - (NSArray<id<XYZAlertDispatchAble>> *)findItemsWithID:(NSString *)alertID;
+
+/// 当前队列快照
+- (NSArray<id<XYZAlertDispatchAble>> *)itemsSnapshot;
 @end
 
 NS_ASSUME_NONNULL_END

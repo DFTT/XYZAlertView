@@ -41,6 +41,13 @@
     return marr;
 }
 
+- (NSArray<id<XYZAlertDispatchAble>> *)itemsSnapshot {
+    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+    NSArray *items = [_items copy];
+    dispatch_semaphore_signal(_lock);
+    return items;
+}
+
 - (void)addItem:(id<XYZAlertDispatchAble>)item {
     if (!item || NO == [item conformsToProtocol:@protocol(XYZAlertDispatchAble)]) {
         return;

@@ -95,17 +95,17 @@
 
 #pragma mark - Lazy
 - (nullable XYZAlertDispatch *)alertDispahIfExist {
-    return objc_getAssociatedObject(self, @selector(alertDispah));
+    return objc_getAssociatedObject(self, @selector(alertDispatch));
 }
 
-- (XYZAlertDispatch *)alertDispah {
-    XYZAlertDispatch *dispath = objc_getAssociatedObject(self, @selector(alertDispah));
+- (XYZAlertDispatch *)alertDispatch {
+    XYZAlertDispatch *dispath = objc_getAssociatedObject(self, @selector(alertDispatch));
     if (nil == dispath) {
         __weak typeof(self) weakSelf = self;
         dispath = [XYZAlertDispatch distachWithVerifyBlock:^UIView *{
             return [weakSelf canShowAlert] ? weakSelf.view : nil;
         }];
-        objc_setAssociatedObject(self, @selector(alertDispah), dispath, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(self, @selector(alertDispatch), dispath, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return dispath;
 }

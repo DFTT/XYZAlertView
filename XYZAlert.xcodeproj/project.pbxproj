@@ -14,6 +14,8 @@
 		5B02F3AF2625812E0023FC84 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B02F3AE2625812E0023FC84 /* Assets.xcassets */; };
 		5B02F3B22625812E0023FC84 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B02F3B02625812E0023FC84 /* LaunchScreen.storyboard */; };
 		5B02F3B52625812E0023FC84 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B02F3B42625812E0023FC84 /* main.m */; };
+		5B0A9A422FA33D9400057513 /* XYZDispatchDemoSubVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0A9A3F2FA33D9400057513 /* XYZDispatchDemoSubVC.m */; };
+		5B0A9A432FA33D9400057513 /* XYZDispatchDemoTabVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0A9A412FA33D9400057513 /* XYZDispatchDemoTabVC.m */; };
 		5B148BED272C0A6E00C01ABF /* XYZAlertQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B148BE1272C0A6E00C01ABF /* XYZAlertQueue.m */; };
 		5B148BEE272C0A6E00C01ABF /* XYZAlertDispatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B148BE3272C0A6E00C01ABF /* XYZAlertDispatch.m */; };
 		5B148BEF272C0A6E00C01ABF /* UIViewController+XYZAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B148BE5272C0A6E00C01ABF /* UIViewController+XYZAlert.m */; };
@@ -34,6 +36,10 @@
 		5B02F3B12625812E0023FC84 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5B02F3B32625812E0023FC84 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5B02F3B42625812E0023FC84 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B0A9A3E2FA33D9400057513 /* XYZDispatchDemoSubVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XYZDispatchDemoSubVC.h; sourceTree = "<group>"; };
+		5B0A9A3F2FA33D9400057513 /* XYZDispatchDemoSubVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XYZDispatchDemoSubVC.m; sourceTree = "<group>"; };
+		5B0A9A402FA33D9400057513 /* XYZDispatchDemoTabVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XYZDispatchDemoTabVC.h; sourceTree = "<group>"; };
+		5B0A9A412FA33D9400057513 /* XYZDispatchDemoTabVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XYZDispatchDemoTabVC.m; sourceTree = "<group>"; };
 		5B148BDE272C0A6E00C01ABF /* XYZAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYZAlertView.h; sourceTree = "<group>"; };
 		5B148BE0272C0A6E00C01ABF /* XYZAlertDispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYZAlertDispatch.h; sourceTree = "<group>"; };
 		5B148BE1272C0A6E00C01ABF /* XYZAlertQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XYZAlertQueue.m; sourceTree = "<group>"; };
@@ -84,6 +90,10 @@
 				5B02F3A62625812B0023FC84 /* SceneDelegate.m */,
 				5B02F3A82625812C0023FC84 /* ViewController.h */,
 				5B02F3A92625812C0023FC84 /* ViewController.m */,
+				5B0A9A3E2FA33D9400057513 /* XYZDispatchDemoSubVC.h */,
+				5B0A9A3F2FA33D9400057513 /* XYZDispatchDemoSubVC.m */,
+				5B0A9A402FA33D9400057513 /* XYZDispatchDemoTabVC.h */,
+				5B0A9A412FA33D9400057513 /* XYZDispatchDemoTabVC.m */,
 				5B02F3AB2625812C0023FC84 /* Main.storyboard */,
 				5B02F3AE2625812E0023FC84 /* Assets.xcassets */,
 				5B02F3B02625812E0023FC84 /* LaunchScreen.storyboard */,
@@ -189,6 +199,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B02F3AA2625812C0023FC84 /* ViewController.m in Sources */,
+				5B0A9A422FA33D9400057513 /* XYZDispatchDemoSubVC.m in Sources */,
+				5B0A9A432FA33D9400057513 /* XYZDispatchDemoTabVC.m in Sources */,
 				5B148BF1272C0A6E00C01ABF /* XYZSystemAlertView.m in Sources */,
 				5B02F3A42625812B0023FC84 /* AppDelegate.m in Sources */,
 				5B148BEE272C0A6E00C01ABF /* XYZAlertDispatch.m in Sources */,

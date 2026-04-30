@@ -8,6 +8,7 @@
 #import "ViewController.h"
 #import "UIViewController+XYZAlert.h"
 #import "XYZSystemAlertView.h"
+#import "XYZDispatchDemoTabVC.h"
 @interface ViewController ()
 {
     int  _aa ;
@@ -45,9 +46,22 @@
     
     UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(hiddenKB)];
     [self.navigationItem setRightBarButtonItem:item];
+
+    UIButton *demoBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+    demoBtn.frame = CGRectMake(0, 0, 240, 50);
+    [demoBtn setTitle:@"父子调度域 Demo (TabVC)" forState:UIControlStateNormal];
+    [demoBtn addTarget:self action:@selector(showDispatchDemo) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:demoBtn];
+    demoBtn.center = CGPointMake(self.view.bounds.size.width / 2, self.view.bounds.size.height / 2);
 }
 - (void)hiddenKB {
     [self.navigationController.view endEditing:YES];
+}
+
+- (void)showDispatchDemo {
+    XYZDispatchDemoTabVC *demoVC = [[XYZDispatchDemoTabVC alloc] init];
+    demoVC.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self.navigationController pushViewController:demoVC animated:true];
 }
 - (void)_____dependAlert {
     XYZSystemAlertViewActionBtn *act1 = [XYZSystemAlertViewActionBtn actionWithName:@"点击跳转测试页面" clickCallback:^{
@@ -83,7 +97,7 @@
     
 //    [alert1 addDependencyAlertID:@"3"];
     
-    [self.alertDispah addAlerts:@[alert1, alert2, alert3]];
+    [self.alertDispatch addAlerts:@[alert1, alert2, alert3]];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [alert1 setCancelAndRemoveFromDispatch];
