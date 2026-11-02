@@ -11,7 +11,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XYZAlert'
-  s.version          = '1.1.8'
+  s.version          = '2.0.0'
   s.summary          = 'XYZAlert...'
   s.description      = <<-DESC
                        XYZAlert Description...
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.author           = { 'XYZAlert' => 'lidong@021.com' }
   s.source           = { :git => 'https://github.com/DFTT/XYZAlertView.git', :tag => s.version.to_s }
   
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '15.0'
   s.frameworks      = 'Foundation', 'UIKit'
 
   # s.user_target_xcconfig =  {'OTHER_LDFLAGS' => ['-lObjC']}

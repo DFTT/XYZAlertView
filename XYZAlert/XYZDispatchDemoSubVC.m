@@ -112,7 +112,7 @@
 }
 
 - (void)p__closeDemo {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - Dispatch Callbacks

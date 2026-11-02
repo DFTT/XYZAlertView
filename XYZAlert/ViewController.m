@@ -23,39 +23,66 @@
     
     self.view.backgroundColor = UIColor.whiteColor;
     
-    UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
-    btn.frame = CGRectMake(0, 0, 200, 50);
-    [btn setTitle:@"SimpleAlet样式 点击循环展示" forState:UIControlStateNormal];
-    [btn addTarget:self action:@selector(_____XYZSimpleAlet) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn];
-    btn.center = CGPointMake(self.view.bounds.size.width / 2, self.view.bounds.size.height / 3 * 1);
-    
-    
-    UIButton *btn2 = [UIButton buttonWithType:UIButtonTypeSystem];
-    btn2.frame = CGRectMake(0, 0, 200, 50);
-    [btn2 setTitle:@"depend 展示" forState:UIControlStateNormal];
-    [btn2 addTarget:self action:@selector(_____dependAlert) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn2];
-    btn2.center = CGPointMake(self.view.bounds.size.width / 2, self.view.bounds.size.height / 3 * 2);
-    
-    
-    
-    UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(30, 0, 300, 50)];
-    tf.placeholder = @"我是输入框";
-    [self.navigationController.navigationBar addSubview:tf];
-    
-    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(hiddenKB)];
-    [self.navigationItem setRightBarButtonItem:item];
-
-    UIButton *demoBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-    demoBtn.frame = CGRectMake(0, 0, 240, 50);
-    [demoBtn setTitle:@"父子调度域 Demo (TabVC)" forState:UIControlStateNormal];
-    [demoBtn addTarget:self action:@selector(showDispatchDemo) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:demoBtn];
-    demoBtn.center = CGPointMake(self.view.bounds.size.width / 2, self.view.bounds.size.height / 2);
+    NSArray<NSArray<NSString *> *> *items = @[
+        @[@"系统样式：循环展示", NSStringFromSelector(@selector(_____XYZSimpleAlet))],
+        @[@"依赖展示", NSStringFromSelector(@selector(_____dependAlert))],
+        @[@"键盘避让示例", NSStringFromSelector(@selector(showKeyboardDemo))],
+        @[@"父子调度域 Demo", NSStringFromSelector(@selector(showDispatchDemo))]
+    ];
+    UIScrollView *scroll = [[UIScrollView alloc] init];
+    scroll.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:scroll];
+    UIStackView *stack = [[UIStackView alloc] init];
+    stack.axis = UILayoutConstraintAxisVertical;
+    stack.spacing = 12;
+    stack.translatesAutoresizingMaskIntoConstraints = NO;
+    [scroll addSubview:stack];
+    for (NSArray<NSString *> *item in items) {
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+        [button setTitle:item[0] forState:UIControlStateNormal];
+        [button addTarget:self action:NSSelectorFromString(item[1]) forControlEvents:UIControlEventTouchUpInside];
+        [button.heightAnchor constraintEqualToConstant:44].active = YES;
+        [stack addArrangedSubview:button];
+    }
+    UILayoutGuide *safe = self.view.safeAreaLayoutGuide;
+    [NSLayoutConstraint activateConstraints:@[
+        [scroll.topAnchor constraintEqualToAnchor:safe.topAnchor],
+        [scroll.bottomAnchor constraintEqualToAnchor:safe.bottomAnchor],
+        [scroll.leadingAnchor constraintEqualToAnchor:safe.leadingAnchor],
+        [scroll.trailingAnchor constraintEqualToAnchor:safe.trailingAnchor],
+        [stack.topAnchor constraintEqualToAnchor:scroll.contentLayoutGuide.topAnchor constant:16],
+        [stack.bottomAnchor constraintEqualToAnchor:scroll.contentLayoutGuide.bottomAnchor constant:-16],
+        [stack.leadingAnchor constraintEqualToAnchor:scroll.contentLayoutGuide.leadingAnchor constant:16],
+        [stack.trailingAnchor constraintEqualToAnchor:scroll.contentLayoutGuide.trailingAnchor constant:-16],
+        [stack.widthAnchor constraintEqualToAnchor:scroll.frameLayoutGuide.widthAnchor constant:-32]
+    ]];
 }
-- (void)hiddenKB {
-    [self.navigationController.view endEditing:YES];
+
+- (void)showKeyboardDemo {
+    XYZAlertView *alert = [[XYZAlertView alloc] init];
+    UIView *container = alert.containerAlertView;
+    UITextField *field = [[UITextField alloc] init];
+    field.placeholder = @"输入文字，观察键盘避让";
+    field.borderStyle = UITextBorderStyleRoundedRect;
+    field.translatesAutoresizingMaskIntoConstraints = NO;
+    [container addSubview:field];
+    UIButton *close = [UIButton buttonWithType:UIButtonTypeSystem];
+    [close setTitle:@"完成" forState:UIControlStateNormal];
+    [close addTarget:alert action:@selector(setCancelAndRemoveFromDispatch) forControlEvents:UIControlEventTouchUpInside];
+    close.translatesAutoresizingMaskIntoConstraints = NO;
+    [container addSubview:close];
+    [NSLayoutConstraint activateConstraints:@[
+        [field.topAnchor constraintEqualToAnchor:container.topAnchor constant:24],
+        [field.leadingAnchor constraintEqualToAnchor:container.leadingAnchor constant:16],
+        [field.trailingAnchor constraintEqualToAnchor:container.trailingAnchor constant:-16],
+        [field.heightAnchor constraintEqualToConstant:44],
+        [close.topAnchor constraintEqualToAnchor:field.bottomAnchor constant:16],
+        [close.centerXAnchor constraintEqualToAnchor:container.centerXAnchor],
+        [close.bottomAnchor constraintEqualToAnchor:container.bottomAnchor constant:-16],
+        [close.heightAnchor constraintEqualToConstant:44]
+    ]];
+    [alert showOnView:self.view];
+    [field becomeFirstResponder];
 }
 
 - (void)showDispatchDemo {
@@ -64,53 +91,26 @@
     [self.navigationController pushViewController:demoVC animated:true];
 }
 - (void)_____dependAlert {
-    XYZSystemAlertViewActionBtn *act1 = [XYZSystemAlertViewActionBtn actionWithName:@"点击跳转测试页面" clickCallback:^{
-        [self.navigationController pushViewController:[ViewController new] animated:YES];
-    }];
-    XYZSystemAlertView *alert1 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题1" msg:@"我的是描述描述描述描述描述描述"];
-    [alert1 addActionBtn:act1];
-    alert1.alertID = @"1";
-    
-    XYZSystemAlertView *alert2 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题2" msg:@"我的是描述描述描述描述描述描述"];
-    [alert2 addActionBtn:act1];
-    alert2.alertID = @"2";
-    
-    XYZSystemAlertView *alert3 = [[XYZSystemAlertView alloc] initWithTitle:@"我是标题3" msg:@"我的是描述描述描述描述描述描述"];
-    [alert3 addActionBtn:act1];
-    alert3.alertID = @"3";
-    alert3.showOnView = self.navigationController.view;
+    XYZSystemAlertView *first = [[XYZSystemAlertView alloc] initWithTitle:@"前置弹窗" msg:@"关闭后展示依赖弹窗。"];
+    first.alertID = @"demo-dependency-first";
+    first.priority = 1;
+    __weak XYZSystemAlertView *weakFirst = first;
+    [first addActionBtn:[XYZSystemAlertViewActionBtn actionWithName:@"关闭" clickCallback:^{
+        [weakFirst dismissWithAnimation:YES];
+    }]];
 
-    
-//    [alert1 setReadyAndTryDispath];
-//    [alert2 setReadyAndTryDispath];
-//    [alert3 setReadyAndTryDispath];
-    
-    
-//    [alert1 addDependencyAlertID:@"2"];
-//    [alert2 addDependencyAlertID:@"3"];
-    
-    alert1.priority = 3;
-    alert2.priority = 2;
-    alert3.priority = 1;
-    
-    alert1.exclusiveBehavior = XYZAlertExclusiveBehaviorHiddenOther;
-    
-//    [alert1 addDependencyAlertID:@"3"];
-    
-    [self.alertDispatch addAlerts:@[alert1, alert2, alert3]];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [alert1 setCancelAndRemoveFromDispatch];
-    });
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [alert2 setReadyAndTryDispath];
-    });
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [alert3 setReadyAndTryDispath];
-    });
+    XYZSystemAlertView *second = [[XYZSystemAlertView alloc] initWithTitle:@"依赖弹窗" msg:@"前置弹窗结束后展示。"];
+    second.priority = 2;
+    second.exclusiveBehavior = XYZAlertExclusiveBehaviorCoverOther;
+    [second addDependencyAlertID:first.alertID];
+    __weak XYZSystemAlertView *weakSecond = second;
+    [second addActionBtn:[XYZSystemAlertViewActionBtn actionWithName:@"关闭" clickCallback:^{
+        [weakSecond dismissWithAnimation:YES];
+    }]];
 
+    [self.alertDispatch addAlerts:@[first, second]];
+    [first setReadyAndTryDispath];
+    [second setReadyAndTryDispath];
 }
 - (void)_____XYZSimpleAlet {
     [_alert dismissWithAnimation:NO];

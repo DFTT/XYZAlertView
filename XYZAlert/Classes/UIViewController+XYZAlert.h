@@ -6,7 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XYZAlertDispatch.h")
 #import "XYZAlertDispatch.h"
+#else
+#import "Dispatch/XYZAlertDispatch.h"
+#endif
 
 
 NS_ASSUME_NONNULL_BEGIN

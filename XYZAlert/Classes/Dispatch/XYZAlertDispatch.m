@@ -34,8 +34,16 @@
     if (self) {
         _queue = [[XYZAlertQueue alloc] init];
         _showingAlerts = [[NSMutableArray alloc] init];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p__sceneDidActivate:) name:UISceneDidActivateNotification object:nil];
     }
     return self;
+}
+
+- (void)p__sceneDidActivate:(NSNotification *)notification {
+    UIView *view = _verifyBlock ? _verifyBlock() : nil;
+    if (view.window.windowScene == notification.object) {
+        [self p__setNeedsDispatch];
+    }
 }
 
 - (NSArray<id<XYZAlertDispatchAble>> *)findAlertWithID:(NSString *)alertID {
@@ -182,10 +190,11 @@
         }
         
         if (alert) {
-            [alert dispatchAlertViewShowOn:view];
+            // 展示回调可能同步关闭，需先登记才能被正确移除。
             [_showingAlerts insertObject:alert atIndex:0];
+            [alert dispatchAlertViewShowOn:view];
             //
-            if (self.someAlertDidShow != nil) {
+            if (self.someAlertDidShow != nil && [_showingAlerts containsObject:alert]) {
                 self.someAlertDidShow(alert);
             }
         }
@@ -240,10 +249,10 @@
         // 从原owner队列中移除
         [alertOwnerDispatch.queue removeItem:alert];
         
-        [alert dispatchAlertViewShowOn:view];
         [alertOwnerDispatch.showingAlerts insertObject:alert atIndex:0];
+        [alert dispatchAlertViewShowOn:view];
         //
-        if (alertOwnerDispatch.someAlertDidShow != nil) {
+        if (alertOwnerDispatch.someAlertDidShow != nil && [alertOwnerDispatch.showingAlerts containsObject:alert]) {
             alertOwnerDispatch.someAlertDidShow(alert);
         }
     }

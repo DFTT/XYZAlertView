@@ -16,13 +16,13 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    CGFloat onePointLine = 1 / [UIScreen mainScreen].scale;
+    CGFloat onePointLine = 1 / self.traitCollection.displayScale;
     
     if (_topLine) _topLine.frame = CGRectMake(0, 0, self.frame.size.width, onePointLine);
     
     if (_leftLine) _leftLine.frame = CGRectMake(0, 0, onePointLine, self.frame.size.height);
     
-    if (_righrLine) _righrLine.frame = CGRectMake(0, self.frame.size.width - onePointLine, onePointLine, self.frame.size.height);
+    if (_righrLine) _righrLine.frame = CGRectMake(self.frame.size.width - onePointLine, 0, onePointLine, self.frame.size.height);
 }
 
 + (instancetype)actionWithName:(NSString *)name clickCallback:(dispatch_block_t)action {
@@ -54,7 +54,7 @@
     }
 }
 - (void)p_clickAction {
-    _action();
+    if (_action) {_action();}
 }
 - (CALayer *)crearLayer {
     CALayer *layer = [CALayer layer];
@@ -70,6 +70,7 @@
 @interface XYZSystemAlertView()
 {
     NSMutableArray<XYZSystemAlertViewActionBtn *> *_actions;
+    NSArray<UIStackView *> *_contentStacks;
 }
 @property (nonatomic) UILabel *titleLabel;
 @property (nonatomic) UILabel *msgLabel;
@@ -105,7 +106,8 @@
 
 - (void)showOnView:(UIView *)view {
     UIView *bgview = self.containerAlertView;
-    
+    [_contentStacks makeObjectsPerformSelector:@selector(removeFromSuperview)];
+
     UIStackView *stack = [[UIStackView alloc] init];
     stack.axis = UILayoutConstraintAxisVertical;
     stack.spacing = 15;
@@ -120,7 +122,6 @@
         [stack addArrangedSubview:self.titleLabel];
         
         self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.titleLabel.heightAnchor constraintEqualToConstant:20].active = YES;
     }
     
     if (_message.length > 0 || _attributeMessage.length > 0) {
@@ -133,6 +134,7 @@
     }
     
     [bgview addSubview:stack];
+    _contentStacks = @[stack];
     stack.translatesAutoresizingMaskIntoConstraints = NO;
     [stack.topAnchor constraintEqualToAnchor:bgview.topAnchor constant:20].active = YES;
     [stack.leftAnchor constraintEqualToAnchor:bgview.leftAnchor constant:15].active = YES;
@@ -153,6 +155,7 @@
             }
         }];
         [bgview addSubview:hstack];
+        _contentStacks = @[stack, hstack];
         hstack.translatesAutoresizingMaskIntoConstraints = NO;
         [hstack.topAnchor constraintEqualToAnchor:stack.bottomAnchor constant:15].active = YES;
         [hstack.leftAnchor constraintEqualToAnchor:bgview.leftAnchor].active = YES;
@@ -171,6 +174,7 @@
         UILabel *label = [[UILabel alloc] init];
         label.textAlignment = NSTextAlignmentCenter;
         label.font = [UIFont boldSystemFontOfSize:18];
+        [label.heightAnchor constraintEqualToConstant:20].active = YES;
         label.textColor = UIColor.blackColor;
         
         _titleLabel = label;

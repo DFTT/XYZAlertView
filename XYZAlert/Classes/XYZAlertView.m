@@ -12,6 +12,13 @@
 @end
 
 @implementation XYZAlertView
+{
+    UIViewPropertyAnimator *_dismissAnimator;
+    NSLayoutConstraint *_containerWidthConstraint;
+    NSLayoutConstraint *_containerHeightConstraint;
+    NSLayoutConstraint *_containerCenterYConstraint;
+}
+@synthesize containerAlertView = _containerAlertView;
 
 #pragma mark - XYZAlertEnableDispatchProtocal
 
@@ -29,11 +36,22 @@
     }
 }
 - (void)setCancelAndRemoveFromDispatch {
-    if (curState != XYZAlertStateEnd) {
-        [self removeFromSuperview];
-        curState = XYZAlertStateEnd;
-        [weakDispatch alertDidRemoveFromSuperView:self];
+    if (curState == XYZAlertStateEnd) {
+        return;
     }
+    // 先结束状态，防止移除视图的子类回调再次取消。
+    curState = XYZAlertStateEnd;
+    id<XYZAlertLifeProtocal> dispatch = weakDispatch;
+    UIViewPropertyAnimator *animator = _dismissAnimator;
+    _dismissAnimator = nil;
+    // 主动取消时丢弃旧动画的完成回调，避免影响同一实例再次展示。
+    if (animator.state == UIViewAnimatingStateActive) {
+        [animator stopAnimation:YES];
+    }
+    _containerAlertView.transform = CGAffineTransformIdentity;
+    _containerAlertView.alpha = 1.0;
+    [self removeFromSuperview];
+    [dispatch alertDidRemoveFromSuperView:self];
 }
 - (void)addDependencyAlertID:(NSString *)alertid {
     if (!alertid || alertid.length == 0) {
@@ -54,8 +72,8 @@
     dependencyAlertIDSet = mset;
 }
 - (void)dispatchAlertViewShowOn:(UIView *)view {
-    [self showOnView:view];
     curState = XYZAlertStateShowing;
+    [self showOnView:view];
 }
 - (void)dispatchAlertTmpHidden:(BOOL)hidden {
     if (hidden) {
@@ -66,89 +84,29 @@
         self.hidden = NO;
     }
 }
-#pragma mark - avoidKeyBoard
+#pragma mark - layout configuration
 - (void)setAutoAvoidKeyboard:(BOOL)autoAvoidKeyboard {
-    if (_autoAvoidKeyboard != autoAvoidKeyboard) {
-        _autoAvoidKeyboard = autoAvoidKeyboard;
-        if (autoAvoidKeyboard) {
-            [self observeKeyboardNotify];
-        }else {
-            [self rmKeyboardNotifyObserver];
-        }
-    }
-}
-- (void)observeKeyboardNotify {
-    [self rmKeyboardNotifyObserver];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(kb_willShow:) name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(kb_willHidden:) name:UIKeyboardWillHideNotification object:nil];
-}
-- (void)rmKeyboardNotifyObserver {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-}
-- (void)kb_willShow:(NSNotification *)notify {
-    [self p_reciveKeyboardNotification:notify frWillShow:YES];
-}
-- (void)kb_willHidden:(NSNotification *)notify {
-    [self p_reciveKeyboardNotification:notify frWillShow:NO];
-}
-- (void)p_reciveKeyboardNotification:(NSNotification *)notify frWillShow:(BOOL)willShow {
-    if (self.window == nil) {
-        return;
-    }
-    
-    CGRect kbToRect = [notify.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGFloat animationDuration = [notify.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
-        
-    CGAffineTransform transf = CGAffineTransformIdentity;
-    if (willShow) {
-        CGRect alertRect = [self.containerAlertView convertRect:self.containerAlertView.bounds toView:self.window];
-        CGFloat offsetY = CGRectGetMaxY(alertRect) - CGRectGetMinY(kbToRect);
-        if (offsetY <= 0) {
-            return;
-        }
-        transf = CGAffineTransformMakeTranslation(0, -offsetY + self.avoidKeyboardOffsetY);
-    }
-    
-    [UIView animateWithDuration:animationDuration > 0 ? animationDuration : 0.2 animations:^{
-        self.containerAlertView.transform = transf;
-    }];
+    _autoAvoidKeyboard = autoAvoidKeyboard;
+    [self setNeedsLayout];
 }
 
-
-- (void)reciveKeyboardNotification:(NSNotification *)notify {
-    if (self.window == nil) {
-        return;
-    }
-    CGRect kbToRect = [notify.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGFloat animationDuration = [notify.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    BOOL kbToShow = CGRectGetMinY(kbToRect) < [UIScreen mainScreen].bounds.size.height;
-    CGRect alertRect = [self.containerAlertView convertRect:self.containerAlertView.bounds toView:self.window];
-    
-    CGFloat offsetY = CGRectGetMaxY(alertRect) - CGRectGetMinY(kbToRect);
-    CGAffineTransform transf = CGAffineTransformIdentity;
-    if (kbToShow) {
-        if (offsetY <= 0) {
-            return;
-        }
-        transf = CGAffineTransformMakeTranslation(0, -offsetY);
-    }
-    
-    [UIView animateWithDuration:animationDuration > 0 ? animationDuration : 0.2 animations:^{
-        self.containerAlertView.transform = transf;
-    }];
+- (void)setAvoidKeyboardOffsetY:(CGFloat)avoidKeyboardOffsetY {
+    _avoidKeyboardOffsetY = avoidKeyboardOffsetY;
+    [self setNeedsLayout];
 }
+
+- (void)setContainerAlertViewMaxSize:(CGSize)containerAlertViewMaxSize {
+    _containerAlertViewMaxSize = containerAlertViewMaxSize;
+    _containerHeightConstraint.constant = containerAlertViewMaxSize.height;
+    [self setNeedsLayout];
+}
+
 #pragma mark - init
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         
-        if ([UIScreen mainScreen].bounds.size.width == 320) {
-            _containerAlertViewMaxSize = CGSizeMake(280, 400);
-        }else {
-            _containerAlertViewMaxSize = CGSizeMake(310, 500);
-        }
+        _containerAlertViewMaxSize = CGSizeMake(310, 500);
         curState = XYZAlertStatePrepare;
         _containerAlertViewRoundValue = 10;
         _backAlpha  = 0.3;
@@ -165,90 +123,79 @@
     if (_showOnView) {
         view = _showOnView;
     }
-    if (!view) {
+    if (!view || _dismissAnimator) {
         return;
     }
     [view addSubview:self];
-    
-    
     self.frame = view.bounds;
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.backgroundColor = UIColor.clearColor;
-    
-    // 宽高
-    self.containerAlertView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.containerAlertView.widthAnchor constraintEqualToConstant:_containerAlertViewMaxSize.width].active =YES;
-    [self.containerAlertView.heightAnchor constraintLessThanOrEqualToConstant:_containerAlertViewMaxSize.height].active =YES;
-    
-    // 动画
+    self.hidden = NO;
+    curState = XYZAlertStateShowing;
+
+    UIView *container = self.containerAlertView;
+    if (!_containerWidthConstraint) {
+        container.translatesAutoresizingMaskIntoConstraints = NO;
+        UILayoutGuide *safe = self.safeAreaLayoutGuide;
+        _containerWidthConstraint = [container.widthAnchor constraintEqualToConstant:_containerAlertViewMaxSize.width];
+        _containerHeightConstraint = [container.heightAnchor constraintLessThanOrEqualToConstant:_containerAlertViewMaxSize.height];
+        _containerCenterYConstraint = [container.centerYAnchor constraintEqualToAnchor:safe.centerYAnchor];
+        [NSLayoutConstraint activateConstraints:@[
+            _containerWidthConstraint, _containerHeightConstraint, _containerCenterYConstraint,
+            [container.centerXAnchor constraintEqualToAnchor:safe.centerXAnchor]
+        ]];
+    }
+    container.transform = CGAffineTransformIdentity;
+    container.alpha = 1.0;
+    [self layoutIfNeeded];
+
     if (_animationType == XYZAlertViewShowAnimatonBounces) {
-        // 位置
-        [self.containerAlertView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor].active = YES;
-        [self.containerAlertView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor].active = YES;
-        self.containerAlertView.transform = CGAffineTransformMakeScale(0.7, 0.7);
-        
-        [self layoutIfNeeded];
-        
+        container.transform = CGAffineTransformMakeScale(0.7, 0.7);
         [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:0.6 initialSpringVelocity:0.8
-                            options:UIViewAnimationOptionCurveEaseInOut
-                         animations:^{
-            self.containerAlertView.transform = CGAffineTransformIdentity;
+                            options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            container.transform = CGAffineTransformIdentity;
             self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:self.backAlpha];
-        }
-                         completion:nil];
-        
+        } completion:nil];
     }else if (_animationType == XYZAlertViewShowAnimatonDown) {
-        // 位置
-        NSLayoutConstraint *btLC = [self.containerAlertView.bottomAnchor constraintEqualToAnchor:self.topAnchor];
-        btLC.active = YES;
-        [self.containerAlertView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor].active = YES;
-        
-        [self layoutIfNeeded];
-        
-        btLC.active = NO;
-        [self.containerAlertView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor].active = YES;
-        
+        container.transform = CGAffineTransformMakeTranslation(0, -CGRectGetMaxY(container.frame));
         [UIView animateWithDuration:0.4 delay:0 usingSpringWithDamping:0.6 initialSpringVelocity:0.3
-                            options:UIViewAnimationOptionCurveEaseIn
-                         animations:^{
-            [self layoutIfNeeded];
+                            options:UIViewAnimationOptionCurveEaseIn animations:^{
+            container.transform = CGAffineTransformIdentity;
             self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:self.backAlpha];
-        }
-                         completion:nil];
+        } completion:nil];
     }else {
-        // 位置
-        [self.containerAlertView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor].active = YES;
-        [self.containerAlertView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor].active = YES;
-        self.containerAlertView.transform = CGAffineTransformMakeScale(1.1, 1.1);
-        self.containerAlertView.alpha = 0.2;
-        
-        [self layoutIfNeeded];
-        
+        container.transform = CGAffineTransformMakeScale(1.1, 1.1);
+        container.alpha = 0.2;
         [UIView animateWithDuration:0.25 animations:^{
             self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:self.backAlpha];
-            self.containerAlertView.transform = CGAffineTransformIdentity;
-            self.containerAlertView.alpha = 1.0;
+            container.transform = CGAffineTransformIdentity;
+            container.alpha = 1.0;
         }];
     }
 }
 
 - (void)dismissWithAnimation:(BOOL)animation {
-    void(^completion)(void) = ^(){
-        [self removeFromSuperview];
-        self->curState = XYZAlertStateEnd;
-        [self->weakDispatch alertDidRemoveFromSuperView:self];
-    };
-    
-    if (animation) {
-        [UIView animateWithDuration:0.2 animations:^{
-            self.backgroundColor = UIColor.clearColor;
-            self.containerAlertView.transform = CGAffineTransformMakeScale(.8, .8);
-            self.containerAlertView.alpha = 0.2;
-        }completion:^(BOOL finished) {
-            completion();
-        }];
-    }else {
-        completion();
+    if (curState == XYZAlertStateEnd) {
+        return;
     }
+    if (!animation) {
+        [self setCancelAndRemoveFromDispatch];
+        return;
+    }
+    if (_dismissAnimator) {
+        return;
+    }
+    _dismissAnimator = [[UIViewPropertyAnimator alloc] initWithDuration:0.2 curve:UIViewAnimationCurveEaseInOut animations:^{
+        self.backgroundColor = UIColor.clearColor;
+        self.containerAlertView.transform = CGAffineTransformMakeScale(.8, .8);
+        self.containerAlertView.alpha = 0.2;
+    }];
+    _dismissAnimator.userInteractionEnabled = NO;
+    __weak typeof(self) weakSelf = self;
+    [_dismissAnimator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+        [weakSelf setCancelAndRemoveFromDispatch];
+    }];
+    [_dismissAnimator startAnimation];
 }
 
 
@@ -268,8 +215,22 @@
 }
 
 - (void)layoutSubviews {
+    // shortcut: 仅避让停靠键盘，需支持浮动键盘时再添加边缘追踪。
+    UIKeyboardLayoutGuide *keyboard = self.keyboardLayoutGuide;
+    CGRect safe = self.safeAreaLayoutGuide.layoutFrame;
+    _containerWidthConstraint.constant = MIN(_containerAlertViewMaxSize.width, MAX(0, CGRectGetWidth(safe)));
     [super layoutSubviews];
-    
+
+    CGFloat keyboardTop = CGRectGetMinY(keyboard.layoutFrame);
+    CGFloat centeredBottom = CGRectGetMidY(safe) + CGRectGetHeight(_containerAlertView.bounds) / 2;
+    CGFloat offsetY = 0;
+    if (_autoAvoidKeyboard && keyboardTop < CGRectGetMaxY(safe) && centeredBottom > keyboardTop) {
+        offsetY = keyboardTop - centeredBottom + _avoidKeyboardOffsetY;
+    }
+    if (_containerCenterYConstraint.constant != offsetY) {
+        _containerCenterYConstraint.constant = offsetY;
+    }
+
     if (_containerAlertView.frame.size.height > 0 && _containerAlertView.layer.cornerRadius != _containerAlertViewRoundValue) {
         _containerAlertView.layer.cornerRadius = _containerAlertViewRoundValue;
     }

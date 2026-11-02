@@ -16,11 +16,27 @@ SheetView见 https://github.com/DFTT/XYZSheetView
 * 支持手动开启父子调度域，在少量需要跨 VC 协调的场景中统一处理优先级、依赖和互斥。
 * 核心类为 `XYZAlertView` 基类，可直接使用或继承定制。亦开箱提供类似系统样式的通用弹窗 `XYZSystemAlertView`。
 
+弹窗随承载视图调整尺寸，容器按当前安全区居中，宽度不超过可用区域，支持折叠、旋转和分屏时的尺寸变化。内容过高时沿用原有高度限制，键盘遮挡时整体上移，允许超出顶部。键盘避让使用 iOS 15 的 `keyboardLayoutGuide`，跟随底部停靠键盘；浮动键盘不触发整体上移。
+
+使用 Scene 的宿主中，VC 调度仅在所属 Scene 激活时展示；后台 ready 项保留，激活后重新调度。库不会替宿主开启多窗口，宿主仍需自行配置 Scene。
+
+子类若完全重写 `showOnView:` 而不调用 `super`，需自行实现布局、键盘避让和动画。接入方添加的固定宽高、中心约束也需自行适配窗口和安全区变化。
+
+## 2.0.0 升级说明
+
+* 最低支持 iOS 15.0。
+* `containerAlertView` 改为只读；通过它添加内容或调整样式，不再替换容器。
+* 旧版 `alertDispah` 改名为 `alertDispatch`。
+* 展示、关闭、调度器及队列的访问和配置均须在主线程进行。网络等后台回调应先切回主线程；内部延迟调度不代表整个 API 支持并发访问。
+
+
 ## 二、安装
 
-iOS 9.0 及以上。使用 Objective-C 编写，可在 Swift 项目中混编使用。
+iOS 15.0 及以上。使用 Objective-C 编写，可在 Swift 项目中混编使用。
 
 * 源码方式：将 `XYZAlert` 文件夹拖拽至项目中即可。
+
+* Swift Package Manager：在 Xcode 的 Package Dependencies 中添加仓库 `https://github.com/DFTT/XYZAlertView.git`，选择 `XYZAlert` 产品。
 
 * CocoaPods：
 
@@ -33,14 +49,14 @@ iOS 9.0 及以上。使用 Objective-C 编写，可在 Swift 项目中混编使�
 
 ### `XYZAlertView`
 
-弹窗基类，实现了调度协议 `XYZAlertEnableDispatchProtocol`，可单独使用或配合调度系统使用，可继承并实现自定义 UI、动画等。
+弹窗基类，实现了调度协议 `XYZAlertDispatchAble`，可单独使用或配合调度系统使用，可继承并实现自定义 UI、动画等。
 
 * `priority`：弹窗优先级，值越大优先级越高，高优先级弹窗可中断低优先级弹窗展示。
-* `dependencyAlerts`：设置本弹窗依赖的其他弹窗（可多个），当所有依赖弹窗结束后本弹窗才可展示（**注意：避免循环依赖**）。
+* `dependencyAlertIDSet`：设置本弹窗依赖的其他弹窗（可多个），当所有依赖弹窗结束后本弹窗才可展示（**注意：避免循环依赖**）。
 * `showOnView`：默认弹窗显示在 VC.view 上；可设置为其它 UIView（如 window / 导航 VC.view / TabVC.view ）以实现覆盖全屏。
 * `curState`：当前弹窗状态（如 ready／waiting／showing／finished）以便调度管理。
-* `setReadyAndTryDispatch`：当异步任务完成、准备好展示弹窗时调用，应触发调度机制检查能否展示。
-* 键盘适配相关属性（如 keyboardAvoidOffset 等）可调整弹窗在键盘弹起时的偏移。
+* `setReadyAndTryDispath`：当异步任务完成、准备好展示弹窗时调用，应触发调度机制检查能否展示。
+* 键盘适配相关属性（如 `avoidKeyboardOffsetY` 等）可调整弹窗在键盘弹起时的偏移。
 
 ### `XYZSystemAlertView`
 
@@ -64,8 +80,9 @@ iOS 9.0 及以上。使用 Objective-C 编写，可在 Swift 项目中混编使�
 父级 dispatch 提供当前激活的子 dispatch：
 
 ```objc
+__weak UITabBarController *weakTabVC = tabVC;
 tabVC.alertDispatch.activeChildDispatchProvider = ^XYZAlertDispatch *{
-    return tabVC.selectedViewController.alertDispatch;
+    return weakTabVC.selectedViewController.alertDispatch;
 };
 ```
 

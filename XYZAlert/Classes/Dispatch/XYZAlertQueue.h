@@ -11,6 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+/// 与调度器一起在主线程访问，不提供完整的并发读写保证。
 @interface XYZAlertQueue : NSObject
 
 - (BOOL)isEmpty;

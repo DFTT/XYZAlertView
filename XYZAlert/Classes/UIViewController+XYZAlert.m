@@ -52,6 +52,10 @@
     if (self.view.window == nil) {
         return NO;
     }
+    UIWindowScene *scene = self.view.window.windowScene;
+    if (scene && scene.activationState != UISceneActivationStateForegroundActive) {
+        return NO;
+    }
     // 转场中
     if (self.transitionCoordinator != nil || self.isBeingDismissed || self.isBeingPresented || self.isMovingToParentViewController || self.isMovingFromParentViewController) {
         return NO;

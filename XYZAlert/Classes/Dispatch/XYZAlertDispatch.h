@@ -9,6 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 调度器及其配置必须在主线程访问；内部合并调度不提供并发访问保护。
 @interface XYZAlertDispatch : NSObject <XYZAlertLifeProtocal>
 
 // 使用此方法 添加Alert 并尝试展示
