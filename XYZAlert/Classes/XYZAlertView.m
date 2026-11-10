@@ -17,6 +17,7 @@
     NSLayoutConstraint *_containerWidthConstraint;
     NSLayoutConstraint *_containerHeightConstraint;
     NSLayoutConstraint *_containerCenterYConstraint;
+    NSLayoutConstraint *_containerKeyboardConstraint;
 }
 @synthesize containerAlertView = _containerAlertView;
 
@@ -74,6 +75,10 @@
 - (void)dispatchAlertViewShowOn:(UIView *)view {
     curState = XYZAlertStateShowing;
     [self showOnView:view];
+    // 调度器已登记为展示中；未能加入视图层级时结束并通知调度器，避免队列卡住。
+    if (curState == XYZAlertStateShowing && self.superview == nil) {
+        [self setCancelAndRemoveFromDispatch];
+    }
 }
 - (void)dispatchAlertTmpHidden:(BOOL)hidden {
     if (hidden) {
@@ -87,12 +92,12 @@
 #pragma mark - layout configuration
 - (void)setAutoAvoidKeyboard:(BOOL)autoAvoidKeyboard {
     _autoAvoidKeyboard = autoAvoidKeyboard;
-    [self setNeedsLayout];
+    _containerKeyboardConstraint.active = autoAvoidKeyboard;
 }
 
 - (void)setAvoidKeyboardOffsetY:(CGFloat)avoidKeyboardOffsetY {
     _avoidKeyboardOffsetY = avoidKeyboardOffsetY;
-    [self setNeedsLayout];
+    _containerKeyboardConstraint.constant = avoidKeyboardOffsetY;
 }
 
 - (void)setContainerAlertViewMaxSize:(CGSize)containerAlertViewMaxSize {
@@ -139,7 +144,17 @@
         UILayoutGuide *safe = self.safeAreaLayoutGuide;
         _containerWidthConstraint = [container.widthAnchor constraintEqualToConstant:_containerAlertViewMaxSize.width];
         _containerHeightConstraint = [container.heightAnchor constraintLessThanOrEqualToConstant:_containerAlertViewMaxSize.height];
+        // 居中优先级低于键盘约束：键盘遮挡时由系统随键盘动画整体上移，允许超出顶部。
         _containerCenterYConstraint = [container.centerYAnchor constraintEqualToAnchor:safe.centerYAnchor];
+        _containerCenterYConstraint.priority = UILayoutPriorityDefaultHigh;
+        // 仅跟随底部停靠键盘（followsUndockedKeyboard 默认 NO），浮动键盘时 guide 回到底部。
+        UIKeyboardLayoutGuide *keyboard = self.keyboardLayoutGuide;
+        if (@available(iOS 17.0, *)) {
+            // 键盘隐藏时 guide 顶部落在视图底部而非安全区底部，避免无键盘时影响过高的弹窗。
+            keyboard.usesBottomSafeArea = NO;
+        }
+        _containerKeyboardConstraint = [container.bottomAnchor constraintLessThanOrEqualToAnchor:keyboard.topAnchor constant:_avoidKeyboardOffsetY];
+        _containerKeyboardConstraint.active = _autoAvoidKeyboard;
         [NSLayoutConstraint activateConstraints:@[
             _containerWidthConstraint, _containerHeightConstraint, _containerCenterYConstraint,
             [container.centerXAnchor constraintEqualToAnchor:safe.centerXAnchor]
@@ -215,21 +230,9 @@
 }
 
 - (void)layoutSubviews {
-    // shortcut: 仅避让停靠键盘，需支持浮动键盘时再添加边缘追踪。
-    UIKeyboardLayoutGuide *keyboard = self.keyboardLayoutGuide;
     CGRect safe = self.safeAreaLayoutGuide.layoutFrame;
     _containerWidthConstraint.constant = MIN(_containerAlertViewMaxSize.width, MAX(0, CGRectGetWidth(safe)));
     [super layoutSubviews];
-
-    CGFloat keyboardTop = CGRectGetMinY(keyboard.layoutFrame);
-    CGFloat centeredBottom = CGRectGetMidY(safe) + CGRectGetHeight(_containerAlertView.bounds) / 2;
-    CGFloat offsetY = 0;
-    if (_autoAvoidKeyboard && keyboardTop < CGRectGetMaxY(safe) && centeredBottom > keyboardTop) {
-        offsetY = keyboardTop - centeredBottom + _avoidKeyboardOffsetY;
-    }
-    if (_containerCenterYConstraint.constant != offsetY) {
-        _containerCenterYConstraint.constant = offsetY;
-    }
 
     if (_containerAlertView.frame.size.height > 0 && _containerAlertView.layer.cornerRadius != _containerAlertViewRoundValue) {
         _containerAlertView.layer.cornerRadius = _containerAlertViewRoundValue;

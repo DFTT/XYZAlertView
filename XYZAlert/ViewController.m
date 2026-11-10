@@ -72,7 +72,7 @@
     close.translatesAutoresizingMaskIntoConstraints = NO;
     [container addSubview:close];
     [NSLayoutConstraint activateConstraints:@[
-        [field.topAnchor constraintEqualToAnchor:container.topAnchor constant:24],
+        [field.topAnchor constraintEqualToAnchor:container.topAnchor constant:274],
         [field.leadingAnchor constraintEqualToAnchor:container.leadingAnchor constant:16],
         [field.trailingAnchor constraintEqualToAnchor:container.trailingAnchor constant:-16],
         [field.heightAnchor constraintEqualToConstant:44],
