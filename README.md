@@ -39,7 +39,7 @@ iOS 15.0 及以上。使用 Objective-C 编写，可在 Swift 项目中混编使
 * Swift Package Manager
 
   1. 在 Xcode 中选择 **File → Add Package Dependencies**，输入 `https://github.com/DFTT/XYZAlertView.git`。
-  2. 依赖规则选择 **Branch**，输入 `main`。使用版本号时，请选择包含 `Package.swift` 的标签。
+  2. 依赖规则选择 **Up to Next Major Version**，起始版本填写 `1.9.0`。
   3. 将 `XYZAlert` 产品添加到应用 target。Swift 使用 `import XYZAlert`，Objective-C 使用 `@import XYZAlert;`。
 
 * CocoaPods：
